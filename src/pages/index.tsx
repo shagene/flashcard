@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+// src/pages/index.tsx
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Layout from "../components/LayoutNonAuth";
 
@@ -7,8 +8,16 @@ const HomePage = () => {
   const [uuid, setUuid] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [showSignup, setShowSignup] = useState(false); // New state to toggle between forms
+  const [showSignup, setShowSignup] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    // Redirect authenticated users to the dashboard
+    const isAuthenticated = localStorage.getItem("isAuthenticated");
+    if (isAuthenticated === "true") {
+      router.push("/dashboard");
+    }
+  }, [router]);
 
   const handleSignup = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
@@ -25,6 +34,7 @@ const HomePage = () => {
       const data = await response.json();
       if (data.email) {
         localStorage.setItem("userEmail", data.email);
+        localStorage.setItem("isAuthenticated", "true");
         router.push("/dashboard");
       } else {
         setError("Signup failed. Please try again.");
@@ -50,6 +60,7 @@ const HomePage = () => {
       const data = await response.json();
       if (data.email) {
         localStorage.setItem("userEmail", data.email);
+        localStorage.setItem("isAuthenticated", "true");
         router.push("/dashboard");
       } else {
         setError("Signin failed. Please try again.");

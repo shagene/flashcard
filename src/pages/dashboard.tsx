@@ -2,8 +2,10 @@
 
 import React from "react";
 import Layout from "../components/LayoutAuth";
+import useAuth from "@/hooks/useAuth";
 
 const Dashboard = () => {
+  useAuth(); // Protect the page
   return (
     <Layout>
       <div className="text-center">
