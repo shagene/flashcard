@@ -1,4 +1,4 @@
-// src/app/components/Layout.tsx
+// src/app/components/LayoutNonAuth.tsx
 import React from "react";
 import Head from "next/head";
 import { Inter } from "next/font/google";
@@ -17,7 +17,7 @@ export default function RootLayout({
         <title>Flash Card App</title>
         <meta name="description" content="To help with test prep." />
         <meta name="keywords" content="flashcards, quizzes, study" />
-        <meta name="author" content="Your Name" />
+        <meta name="author" content="Steven Hagene" />
       </Head>
       <div className={inter.className}>{children}</div>
     </>
