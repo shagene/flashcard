@@ -1,48 +1,94 @@
-import useAuth from "@/hooks/useAuth";
 import Layout from "../components/LayoutAuth";
 import { useState } from "react";
+import { useRouter } from "next/router";
+import { FiPlusCircle, FiMinusCircle } from "react-icons/fi";
+import { useAuth } from "@/hooks/useAuth";
 
 const CreateQuizPage = () => {
   useAuth(); // Protect the page
   const [quizName, setQuizName] = useState("");
-  const [file, setFile] = useState<File | null>(null);
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      setFile(event.target.files[0]);
-    }
-  };
+  const [quizQuestions, setQuizQuestions] = useState([
+    { question: "", correct_answer: "", incorrect_answers: ["", "", ""] },
+  ]);
+  const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (file) {
-      const formData = new FormData();
-      formData.append("title", quizName);
-      formData.append("file", file);
+    const userId = localStorage.getItem("userId");
 
-      const response = await fetch("/api/uploadQuiz", {
-        method: "POST",
-        body: formData,
-      });
+    const quizData = {
+      title: quizName,
+      user_id: userId,
+      questions: quizQuestions,
+    };
 
-      const data = await response.json();
-      if (response.ok) {
-        console.log("Quiz uploaded successfully", data);
-      } else {
-        console.error("Error uploading quiz", data.error);
-      }
+    console.log("Submitting:", quizData);
+
+    const response = await fetch("/api/uploadQuiz", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(quizData),
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+      console.log("Quiz and questions uploaded successfully", data);
+      router.push("/dashboard");
+    } else {
+      console.error("Error uploading quiz and questions", data.error);
     }
+  };
+
+  const handleQuizNameChange = (value: string) => {
+    setQuizName(value);
+  };
+
+  const handleQuestionChange = (index: number, value: string) => {
+    const newQuestions = [...quizQuestions];
+    newQuestions[index].question = value;
+    setQuizQuestions(newQuestions);
+  };
+
+  const handleCorrectAnswerChange = (index: number, value: string) => {
+    const newQuestions = [...quizQuestions];
+    newQuestions[index].correct_answer = value;
+    setQuizQuestions(newQuestions);
+  };
+
+  const handleIncorrectAnswerChange = (
+    index: number,
+    answerIndex: number,
+    value: string,
+  ) => {
+    const newQuestions = [...quizQuestions];
+    newQuestions[index].incorrect_answers[answerIndex] = value;
+    setQuizQuestions(newQuestions);
+  };
+
+  const addQuestion = () => {
+    setQuizQuestions([
+      ...quizQuestions,
+      { question: "", correct_answer: "", incorrect_answers: ["", "", ""] },
+    ]);
+  };
+
+  const deleteQuestion = (index: number) => {
+    const newQuestions = [...quizQuestions];
+    newQuestions.splice(index, 1);
+    setQuizQuestions(newQuestions);
   };
 
   return (
     <Layout>
       <div className="text-center">
         <h1 className="text-2xl font-bold">Create Quiz</h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 mx-4">
           <div>
             <label
               htmlFor="quizName"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+              className="block text-sm font-medium text-gray-700"
             >
               Quiz Name
             </label>
@@ -50,30 +96,99 @@ const CreateQuizPage = () => {
               type="text"
               id="quizName"
               value={quizName}
-              onChange={(e) => setQuizName(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              onChange={(e) => handleQuizNameChange(e.target.value)}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               required
             />
           </div>
-          <div>
-            <label
-              htmlFor="file"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-            >
-              Upload CSV
-            </label>
-            <input
-              type="file"
-              id="file"
-              accept=".csv"
-              onChange={handleFileChange}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              required
-            />
+          <div className="mt-8">
+            <table className="table-auto w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th>Question</th>
+                  <th>Correct Answer</th>
+                  <th>Incorrect Answer 1</th>
+                  <th>Incorrect Answer 2</th>
+                  <th>Incorrect Answer 3</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white">
+                {quizQuestions.map((q, index) => (
+                  <tr key={index} className="mb-4">
+                    <td className={index === 0 ? "pt-5" : ""}>
+                      <input
+                        type="text"
+                        value={q.question}
+                        onChange={(e) =>
+                          handleQuestionChange(index, e.target.value)
+                        }
+                        className="input border border-gray-300 rounded-md shadow-sm py-2 px-3 mb-4"
+                        required
+                      />
+                    </td>
+                    <td className={index === 0 ? "pt-5" : ""}>
+                      <input
+                        type="text"
+                        value={q.correct_answer}
+                        onChange={(e) =>
+                          handleCorrectAnswerChange(index, e.target.value)
+                        }
+                        className="input border border-gray-300 rounded-md shadow-sm py-2 px-3 mb-4"
+                        required
+                      />
+                    </td>
+                    {q.incorrect_answers.map((answer, answerIndex) => (
+                      <td
+                        key={answerIndex}
+                        className={index === 0 ? "pt-5" : ""}
+                      >
+                        <input
+                          type="text"
+                          value={answer}
+                          onChange={(e) =>
+                            handleIncorrectAnswerChange(
+                              index,
+                              answerIndex,
+                              e.target.value,
+                            )
+                          }
+                          className="input border border-gray-300 rounded-md shadow-sm py-2 px-3 mb-4"
+                          required
+                        />
+                      </td>
+                    ))}
+                    <td
+                      className={`flex items-center justify-center ${index === 0 ? "pt-5" : ""}`}
+                    >
+                      {index === quizQuestions.length - 1 && (
+                        <button
+                          type="button"
+                          onClick={addQuestion}
+                          className="mr-2 text-green-600"
+                        >
+                          <FiPlusCircle size={24} />
+                        </button>
+                      )}
+                      {quizQuestions.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => deleteQuestion(index)}
+                          className="text-red-600"
+                        >
+                          <FiMinusCircle size={24} />
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
           <button
             type="submit"
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            className="submit-button mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+            onClick={handleSubmit}
           >
             Submit
           </button>

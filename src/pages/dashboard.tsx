@@ -2,8 +2,8 @@
 
 import React from "react";
 import Layout from "../components/LayoutAuth";
-import useAuth from "@/hooks/useAuth";
 import { useRouter } from "next/router";
+import { useAuth } from "@/hooks/useAuth";
 
 const Dashboard = () => {
   useAuth(); // Protect the page
@@ -31,7 +31,7 @@ const Dashboard = () => {
             <h2 className="font-semibold text-lg">Create Quiz</h2>
             <p>Create your own quizzes.</p>
             <button
-              className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
+              className="mt-2 px-4 py-2 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               onClick={handleCreateQuiz}
             >
               Create
@@ -44,7 +44,7 @@ const Dashboard = () => {
             ) : (
               <p>No quizzes available. Create one!</p>
             )}
-            <button className="mt-2 px-4 py-2 bg-blue-500 text-white rounded">
+            <button className="mt-2 px-4 py-2 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
               Take
             </button>
           </div>
@@ -56,7 +56,7 @@ const Dashboard = () => {
               <p>No results yet. Take a quiz!</p>
             )}
             <button
-              className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
+              className="mt-2 px-4 py-2 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               onClick={handleViewResults}
             >
               View
