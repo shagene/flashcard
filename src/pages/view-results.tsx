@@ -1,7 +1,7 @@
 import React from "react";
 
 import Layout from "../components/LayoutAuth";
-import useAuth from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/useAuth";
 
 const ViewResultsPage = () => {
   useAuth(); // Protect the page
