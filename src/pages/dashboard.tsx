@@ -1,16 +1,22 @@
 // src/pages/dashboard.tsx
-
 import React from "react";
 import Layout from "../components/LayoutAuth";
 import { useRouter } from "next/router";
 import { useAuth } from "@/hooks/useAuth";
+import AvailableQuizzes from "@/components/AvailableQuizzes";
 
-const Dashboard = () => {
+interface Quiz {
+  id: string;
+  title: string;
+  description: string;
+}
+
+const Dashboard: React.FC = () => {
   useAuth(); // Protect the page
 
   const router = useRouter();
 
-  const quizzes = [];
+  const quizzes: Quiz[] = []; // Define quizzes with the correct type
   const results = [];
 
   const handleCreateQuiz = () => {
@@ -38,15 +44,7 @@ const Dashboard = () => {
             </button>
           </div>
           <div className="border p-4 rounded-lg shadow">
-            <h2 className="font-semibold text-lg">Take Quiz</h2>
-            {quizzes.length > 0 ? (
-              <p>Start taking quizzes.</p>
-            ) : (
-              <p>No quizzes available. Create one!</p>
-            )}
-            <button className="mt-2 px-4 py-2 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-              Take
-            </button>
+            <AvailableQuizzes quizzes={quizzes} />
           </div>
           <div className="border p-4 rounded-lg shadow">
             <h2 className="font-semibold text-lg">View Quiz Results</h2>

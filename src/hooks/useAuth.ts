@@ -58,6 +58,7 @@ export const useAuth = (): UseAuthReturn => {
         });
         const data = await response.json();
         if (data.email) {
+          localStorage.setItem("userUuid", uuid);
           localStorage.setItem("userEmail", data.email);
           localStorage.setItem("isAuthenticated", "true");
           router.push("/dashboard");

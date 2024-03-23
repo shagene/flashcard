@@ -1,4 +1,4 @@
-// pages/api/flashcards.js
+// pages/api/getFlashcards.js
 import { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "../../utils/supabaseClient";
 
@@ -6,14 +6,13 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  if (req.method === "POST") {
-    const { flashcards } = req.body;
-    const { error } = await supabase.from("flashcards").insert(flashcards);
+  if (req.method === "GET") {
+    const { data, error } = await supabase.from("flashcards").select("*");
 
     if (error) return res.status(500).json({ error: error.message });
-    res.status(200).json({ message: "Flashcards uploaded successfully" });
+    res.status(200).json(data);
   } else {
-    res.setHeader("Allow", ["POST"]);
+    res.setHeader("Allow", ["GET"]);
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }

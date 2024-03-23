@@ -7,34 +7,47 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   if (req.method === "POST") {
-    const { title, user_id, questions } = req.body;
-
-    // Insert quiz into quizzes table
     try {
       const { title, user_id, questions } = req.body;
 
-      // Insert quiz into quizzes table
-      interface QuizData {
-        id: number;
-      }
-
-      const { data: quizData, error: quizError } = (await supabase
+      // Attempt to insert the new quiz
+      const insertResponse = await supabase
         .from("quizzes")
         .insert([{ title, user_id }])
-        .single()) as { data: QuizData; error: any };
+        .single();
 
-      if (quizError) throw quizError;
+      console.log("Insert response:", insertResponse); // Log the full response for debugging
 
-      const quizId = quizData.id;
+      if (insertResponse.error) {
+        console.error("Quiz insert error:", insertResponse.error);
+        throw insertResponse.error;
+      }
+
+      // Fetch the latest quiz ID for the user
+      const { data: latestQuiz, error: fetchError } = await supabase
+        .from("quizzes")
+        .select("id")
+        .eq("user_id", user_id)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .single();
+
+      if (fetchError || !latestQuiz) {
+        console.error("Error fetching latest quiz ID:", fetchError);
+        throw new Error("Failed to fetch latest quiz ID after insert");
+      }
+
+      const quizId = latestQuiz.id; // Use the fetched latest quiz ID
+      console.log("Latest quiz ID:", quizId);
 
       // Prepare questions for batch insert
       const flashcards = questions.map(
         (question: {
-          question: any;
-          correct_answer: any;
-          incorrect_answers: any[];
+          question: string;
+          correct_answer: string;
+          incorrect_answers: string[];
         }) => ({
-          quiz_id: quizId,
+          quiz_id: quizId, // Use fetched quiz ID for association
           question: question.question,
           correct_answer: question.correct_answer,
           incorrect_answer1: question.incorrect_answers[0],
@@ -44,11 +57,17 @@ export default async function handler(
       );
 
       // Insert questions into flashcards table
-      const { error: flashcardsError } = await supabase
+      const flashcardsInsertResponse = await supabase
         .from("flashcards")
         .insert(flashcards);
 
-      if (flashcardsError) throw flashcardsError;
+      if (flashcardsInsertResponse.error) {
+        console.error(
+          "Flashcards insert error:",
+          flashcardsInsertResponse.error,
+        );
+        throw flashcardsInsertResponse.error;
+      }
 
       res
         .status(200)

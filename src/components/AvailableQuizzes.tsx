@@ -50,16 +50,18 @@ const AvailableQuizzes: React.FC<AvailableQuizzesProps> = ({ quizzes }) => {
   }, []);
 
   useEffect(() => {
-    const fetchQuizzesInfo = async () => {
+    const getTotalQuestionsFromQuiz = async () => {
       if (!quizId) return;
-
       try {
-        const response = await fetch(`/api/getFlashcards?quizId=${quizId}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
+        const response = await fetch(
+          `/api/getTotalQuestionsFromQuiz?quizId=${quizId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
           },
-        });
+        );
 
         if (!response.ok) {
           throw new Error(
@@ -68,9 +70,10 @@ const AvailableQuizzes: React.FC<AvailableQuizzesProps> = ({ quizzes }) => {
         }
 
         const data = await response.json();
-        // Assuming data contains the number of questions or updated quiz info
         const updatedQuizzes = fetchedQuizzes.map((quiz) =>
-          quiz.id === quizId ? { ...quiz, questions: data.questions } : quiz,
+          quiz.id === quizId
+            ? { ...quiz, questions: Array(data.totalQuestions).fill({}) }
+            : quiz,
         );
         setFetchedQuizzes(updatedQuizzes);
       } catch (error) {
@@ -78,7 +81,7 @@ const AvailableQuizzes: React.FC<AvailableQuizzesProps> = ({ quizzes }) => {
       }
     };
 
-    fetchQuizzesInfo();
+    getTotalQuestionsFromQuiz();
   }, [quizId, fetchedQuizzes]);
 
   return (
