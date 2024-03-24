@@ -3,7 +3,7 @@ import React from "react";
 import Layout from "../components/LayoutAuth";
 import { useRouter } from "next/router";
 import { useAuth } from "@/hooks/useAuth";
-import AvailableQuizzes from "@/components/AvailableQuizzes";
+import QuizOverview from "@/components/QuizOverview";
 
 interface Quiz {
   id: string;
@@ -44,7 +44,7 @@ const Dashboard: React.FC = () => {
             </button>
           </div>
           <div className="border p-4 rounded-lg shadow">
-            <AvailableQuizzes quizzes={quizzes} />
+            <QuizOverview />
           </div>
           <div className="border p-4 rounded-lg shadow">
             <h2 className="font-semibold text-lg">View Quiz Results</h2>
