@@ -13,7 +13,10 @@ interface Quiz {
 
 const QuizOverview: React.FC = () => {
   const [fetchedQuizzes, setFetchedQuizzes] = useState<Quiz[]>([]);
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
+  const [sortConfig, setSortConfig] = useState<{
+    key: keyof Quiz | null;
+    direction: "ascending" | "descending" | null;
+  }>({ key: null, direction: null });
 
   useEffect(() => {
     const fetchQuizOverview = async () => {
@@ -44,7 +47,7 @@ const QuizOverview: React.FC = () => {
     fetchQuizOverview();
   }, []);
 
-  const requestSort = (key: string) => {
+  const requestSort = (key: keyof Quiz) => {
     let direction: "ascending" | "descending" = "ascending";
     if (
       sortConfig &&
@@ -53,20 +56,17 @@ const QuizOverview: React.FC = () => {
     ) {
       direction = "descending";
     }
-    setSortConfig({
-      key: key || (null as string | null),
-      direction: direction as "ascending" | "descending",
-    });
+    setSortConfig({ key, direction });
   };
 
   const sortedQuizzes = React.useMemo(() => {
     let sortableItems = [...fetchedQuizzes];
-    if (sortConfig !== null) {
+    if (sortConfig.key !== null) {
       sortableItems.sort((a, b) => {
-        if (sortConfig.key && a[sortConfig.key] < b[sortConfig.key]) {
+        if (a[sortConfig.key!]! > b[sortConfig.key!]!) {
           return sortConfig.direction === "ascending" ? -1 : 1;
         }
-        if (sortConfig.key && a[sortConfig.key] > b[sortConfig.key]) {
+        if (a[sortConfig.key!]! < b[sortConfig.key!]!) {
           return sortConfig.direction === "ascending" ? 1 : -1;
         }
         return 0;
@@ -139,7 +139,7 @@ const QuizOverview: React.FC = () => {
           </table>
         </div>
       ) : (
-        <p>No quizzes available. Create one!</p>
+        <p>No quizzes available.</p>
       )}
     </div>
   );
