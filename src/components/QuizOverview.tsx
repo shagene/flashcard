@@ -1,4 +1,4 @@
-// src/components/QuizOverview.tsx
+import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 interface Quiz {
@@ -17,6 +17,7 @@ const QuizOverview: React.FC = () => {
     key: keyof Quiz | null;
     direction: "ascending" | "descending" | null;
   }>({ key: null, direction: null });
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchQuizOverview = async () => {
@@ -39,8 +40,10 @@ const QuizOverview: React.FC = () => {
 
         const data = await response.json();
         setFetchedQuizzes(data.quizzes);
+        setIsLoading(false);
       } catch (error) {
         console.error("Failed to fetch quiz overview:", error);
+        setIsLoading(false);
       }
     };
 
@@ -74,6 +77,14 @@ const QuizOverview: React.FC = () => {
     }
     return sortableItems;
   }, [fetchedQuizzes, sortConfig]);
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center">
+        <div>Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -118,9 +129,9 @@ const QuizOverview: React.FC = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {sortedQuizzes.map((quiz) => (
                 <tr key={quiz.quiz_id}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <a href={`/take-quiz/${quiz.quiz_id}`}>{quiz.quiz_name}</a>
-                  </td>
+                  <Link href={`/take-quiz?quizId=${quiz.quiz_id}`}>
+                    {quiz.quiz_name}
+                  </Link>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {quiz.num_questions}
                   </td>
