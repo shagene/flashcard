@@ -1,6 +1,7 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
+// Defines the structure of the Quiz object
 interface Quiz {
   user_id: string;
   quiz_id: string;
@@ -12,6 +13,7 @@ interface Quiz {
 }
 
 const QuizOverview: React.FC = () => {
+  // State variables to store fetched quizzes, sort configuration, and loading state
   const [fetchedQuizzes, setFetchedQuizzes] = useState<Quiz[]>([]);
   const [sortConfig, setSortConfig] = useState<{
     key: keyof Quiz | null;
@@ -20,6 +22,7 @@ const QuizOverview: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // Fetches quiz overview data from the API when the component mounts
     const fetchQuizOverview = async () => {
       const userId = localStorage.getItem("userUuid");
       if (!userId) return;
@@ -50,6 +53,7 @@ const QuizOverview: React.FC = () => {
     fetchQuizOverview();
   }, []);
 
+  // Function to handle sorting request based on the clicked column
   const requestSort = (key: keyof Quiz) => {
     let direction: "ascending" | "descending" = "ascending";
     if (
@@ -62,6 +66,7 @@ const QuizOverview: React.FC = () => {
     setSortConfig({ key, direction });
   };
 
+  // Memoized value to store sorted quizzes based on the current sort configuration
   const sortedQuizzes = React.useMemo(() => {
     let sortableItems = [...fetchedQuizzes];
     if (sortConfig.key !== null) {
@@ -78,6 +83,7 @@ const QuizOverview: React.FC = () => {
     return sortableItems;
   }, [fetchedQuizzes, sortConfig]);
 
+  // Renders a loading message while the data is being fetched
   if (isLoading) {
     return (
       <div className="flex justify-center items-center">
@@ -86,6 +92,7 @@ const QuizOverview: React.FC = () => {
     );
   }
 
+  // Renders the quiz overview table with sortable columns and quiz data
   return (
     <div>
       <h3 className="text-lg font-semibold">Available Quizzes</h3>
@@ -128,10 +135,16 @@ const QuizOverview: React.FC = () => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {sortedQuizzes.map((quiz) => (
-                <tr key={quiz.quiz_id}>
-                  <Link href={`/take-quiz?quizId=${quiz.quiz_id}`}>
+                <tr
+                  key={quiz.quiz_id}
+                  onClick={() =>
+                    (window.location.href = `/take-quiz?quizId=${quiz.quiz_id}`)
+                  }
+                  style={{ cursor: "pointer" }}
+                >
+                  <td className="px-6 py-4 whitespace-nowrap">
                     {quiz.quiz_name}
-                  </Link>
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {quiz.num_questions}
                   </td>

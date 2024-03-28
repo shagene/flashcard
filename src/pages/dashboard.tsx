@@ -5,28 +5,36 @@ import { useRouter } from "next/router";
 import { useAuth } from "@/hooks/useAuth";
 import QuizOverview from "@/components/QuizOverview";
 
+// Define an interface for Quiz objects
 interface Quiz {
   id: string;
   title: string;
   description: string;
 }
 
+// Dashboard component
 const Dashboard: React.FC = () => {
-  useAuth(); // Protect the page
+  // Use the useAuth hook to protect the page
+  useAuth();
 
+  // Use the useRouter hook to navigate between pages
   const router = useRouter();
 
-  const quizzes: Quiz[] = []; // Define quizzes with the correct type
+  // Initialize an empty array for quizzes and results
+  const quizzes: Quiz[] = [];
   const results = [];
 
+  // Function to navigate to the create quiz page
   const handleCreateQuiz = () => {
     router.push("/create-quiz");
   };
 
+  // Function to navigate to the view results page
   const handleViewResults = () => {
     router.push("/view-results");
   };
 
+  // Render the Dashboard component
   return (
     <Layout>
       <div className="text-center">
@@ -48,6 +56,7 @@ const Dashboard: React.FC = () => {
           </div>
           <div className="border p-4 rounded-lg shadow">
             <h2 className="font-semibold text-lg">View Quiz Results</h2>
+            {/* Conditionally render a message based on the availability of results */}
             {results.length > 0 ? (
               <p>Check out your quiz results.</p>
             ) : (
@@ -66,4 +75,5 @@ const Dashboard: React.FC = () => {
   );
 };
 
+// Export the Dashboard component
 export default Dashboard;
