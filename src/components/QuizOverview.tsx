@@ -138,7 +138,7 @@ const QuizOverview: React.FC = () => {
                 <tr
                   key={quiz.quiz_id}
                   onClick={() =>
-                    (window.location.href = `/take-quiz?quizId=${quiz.quiz_id}`)
+                    (window.location.href = `/take-quiz?quizId=${quiz.quiz_id}&quizName=${encodeURIComponent(quiz.quiz_name)}`)
                   }
                   style={{ cursor: "pointer" }}
                 >
