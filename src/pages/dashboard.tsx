@@ -39,7 +39,6 @@ const Dashboard: React.FC = () => {
     <Layout>
       <div className="text-center">
         <h1 className="text-2xl font-bold">Dashboard</h1>
-        <p>Welcome to your dashboard!</p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
           <div className="border p-4 rounded-lg shadow">
             <h2 className="font-semibold text-lg">Create Quiz</h2>

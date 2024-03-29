@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import LayoutAuth from "../components/LayoutAuth";
 import { useAuth } from "@/hooks/useAuth";
 import { fetchQuizDetails } from "./api/takeQuiz";
+import useTimer from "@/hooks/useTimer"; // Adjust the import path as necessary
 
 const TakeQuizPage = () => {
   useAuth(); // Protect the page
@@ -10,6 +11,8 @@ const TakeQuizPage = () => {
   const { quizId, quizName } = router.query;
   const [quiz, setQuiz] = useState<{ questions: any[] } | null>(null);
   const [startTime, setStartTime] = useState<Date | null>(null);
+  const [stopTime, setStopTime] = useState<Date | null>(null);
+  const timeElapsed = useTimer(startTime, stopTime);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [submittedAnswers, setSubmittedAnswers] = useState<
@@ -21,15 +24,17 @@ const TakeQuizPage = () => {
     if (quizId) {
       fetchQuizDetails(quizId).then((quizData) => {
         if (!quizData) return;
-        const questions = quizData.map((q) => ({
-          ...q,
-          answers: [
-            { text: q.correct_answer, isCorrect: true },
-            { text: q.incorrect_answer1, isCorrect: false },
-            { text: q.incorrect_answer2, isCorrect: false },
-            { text: q.incorrect_answer3, isCorrect: false },
-          ].sort(() => Math.random() - 0.5), // Shuffle answers
-        }));
+        const questions = quizData
+          .map((q) => ({
+            ...q,
+            answers: [
+              { text: q.correct_answer, isCorrect: true },
+              { text: q.incorrect_answer1, isCorrect: false },
+              { text: q.incorrect_answer2, isCorrect: false },
+              { text: q.incorrect_answer3, isCorrect: false },
+            ].sort(() => Math.random() - 0.5), // Shuffle answers
+          }))
+          .sort(() => Math.random() - 0.5); // Shuffle questions
         setQuiz({ questions });
       });
     }
@@ -55,6 +60,7 @@ const TakeQuizPage = () => {
         setCurrentQuestionIndex(nextQuestionIndex);
       } else {
         setQuizFinished(true);
+        setStopTime(new Date()); // Stop the timer when the quiz is finished
       }
     }
   }
@@ -81,6 +87,7 @@ const TakeQuizPage = () => {
             Your score: {scorePercentage.toFixed(2)}% ({score} out of{" "}
             {quiz.questions.length})
           </div>
+          <div>Time taken: {timeElapsed}</div>
           <button
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition duration-300"
             onClick={goToDashboard}
@@ -109,6 +116,7 @@ const TakeQuizPage = () => {
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center space-y-4">
+          <div className="absolute top-20 right-0 p-4">Time: {timeElapsed}</div>
           <div>
             Question {currentQuestionIndex + 1} of {quiz.questions.length}
           </div>
