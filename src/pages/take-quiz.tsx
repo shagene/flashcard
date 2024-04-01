@@ -47,7 +47,7 @@ const TakeQuizPage = () => {
     setStartTime(new Date());
   };
 
-  function submitAnswer(answer: any): void {
+  const submitAnswer = async (answer: any): Promise<void> => {
     if (quiz && currentQuestionIndex < quiz.questions.length) {
       const isCorrect = answer.isCorrect;
       if (isCorrect) {
@@ -64,9 +64,28 @@ const TakeQuizPage = () => {
       } else {
         setQuizFinished(true);
         setStopTime(new Date());
+        const quizId = router.query.quizId;
+        // Ensure timeElapsed is calculated or updated before this point
+        const timeTaken = timeElapsed; // Make sure timeElapsed is correctly updated before this line
+        fetch("/api/takeQuiz", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            quizId,
+            answers: submittedAnswers,
+            timeTaken: timeTaken.toString(), // Ensure timeTaken is converted to a string if it's not already
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => console.log(data))
+          .catch((error) =>
+            console.error("Error submitting quiz answers:", error),
+          );
       }
     }
-  }
+  };
 
   const goToDashboard = () => {
     router.push("/dashboard");

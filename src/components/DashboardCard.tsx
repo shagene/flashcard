@@ -31,16 +31,11 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
   // The card is a div with various CSS classes for styling
   // Inside the div, there are conditionally rendered elements based on the props
   return (
-    <div className="border p-6 rounded-lg shadow-lg bg-white hover:shadow-xl transition-shadow duration-300 ease-in-out max-h-87 overflow-auto">
-      // Display the title as a heading with specific styling
+    <div className="border p-6 rounded-lg shadow-lg bg-white hover:shadow-xl transition-shadow duration-300 ease-in-out max-h-80 overflow-auto">
+      {/* Display the title as a heading with specific styling */}
       <h2 className="font-semibold text-xl text-indigo-600">{title}</h2>
-      // If 'description' is provided, display it as a paragraph with specific
-      styling
       {description && <p className="mt-2">{description}</p>}
-      // Render any children passed to the component
       {children}
-      // If both 'buttonText' and 'onButtonClick' are provided, render a button
-      with specific styling and an onClick handler
       {buttonText && onButtonClick && (
         <button
           className="mt-4 px-4 py-2 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

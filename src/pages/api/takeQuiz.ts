@@ -29,7 +29,7 @@ export default async function handler(
     const { quizId, answers } = req.body;
 
     // Submit the answers to the server and get the results
-    const result = await submitQuizAnswers(quizId, answers);
+    const result = await submitQuizAnswers(quizId, answers, req.body.timeTaken);
 
     // Respond with the result of the submission
     res.status(200).json({ result });
@@ -61,9 +61,14 @@ export const fetchQuizDetails = async (
 
 export const submitQuizAnswers = async (
   quizId: string | string[] | undefined,
-  answers: string | string[] | undefined,
+  answers: Array<{ questionId: any; isCorrect: boolean }> | undefined,
+  timeTaken: string, // Ensure this matches the expected type
 ) => {
+  console.log("Received data for submission:", { quizId, answers, timeTaken });
   // Implement the actual submission logic here.
-  // For demonstration, we'll just return a success message.
-  return { message: "Quiz answers submitted successfully" };
+  // For demonstration, we'll just return a success message and time taken.
+  return {
+    message: "Quiz answers submitted successfully",
+    timeElapsed: timeTaken,
+  };
 };
