@@ -3,10 +3,13 @@ import { useRouter } from "next/router";
 import LayoutAuth from "../components/LayoutAuth";
 import { useAuth } from "@/hooks/useAuth";
 import { fetchQuizDetails } from "./api/takeQuiz";
-import useTimer from "@/hooks/useTimer"; // Adjust the import path as necessary
+import useTimer from "@/hooks/useTimer";
+import QuizStart from "@/components/QuizStart";
+import QuizQuestion from "@/components/QuizQuestion";
+import QuizFinish from "@/components/QuizFinish";
 
 const TakeQuizPage = () => {
-  useAuth(); // Protect the page
+  useAuth();
   const router = useRouter();
   const { quizId, quizName } = router.query;
   const [quiz, setQuiz] = useState<{ questions: any[] } | null>(null);
@@ -32,9 +35,9 @@ const TakeQuizPage = () => {
               { text: q.incorrect_answer1, isCorrect: false },
               { text: q.incorrect_answer2, isCorrect: false },
               { text: q.incorrect_answer3, isCorrect: false },
-            ].sort(() => Math.random() - 0.5), // Shuffle answers
+            ].sort(() => Math.random() - 0.5),
           }))
-          .sort(() => Math.random() - 0.5); // Shuffle questions
+          .sort(() => Math.random() - 0.5);
         setQuiz({ questions });
       });
     }
@@ -60,7 +63,7 @@ const TakeQuizPage = () => {
         setCurrentQuestionIndex(nextQuestionIndex);
       } else {
         setQuizFinished(true);
-        setStopTime(new Date()); // Stop the timer when the quiz is finished
+        setStopTime(new Date());
       }
     }
   }
@@ -81,20 +84,13 @@ const TakeQuizPage = () => {
     const scorePercentage = (score / quiz.questions.length) * 100;
     return (
       <LayoutAuth>
-        <div className="flex flex-col items-center justify-center space-y-4">
-          <h1 className="text-2xl font-bold">Quiz Finished!</h1>
-          <div>
-            Your score: {scorePercentage.toFixed(2)}% ({score} out of{" "}
-            {quiz.questions.length})
-          </div>
-          <div>Time taken: {timeElapsed}</div>
-          <button
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition duration-300"
-            onClick={goToDashboard}
-          >
-            Go to Dashboard
-          </button>
-        </div>
+        <QuizFinish
+          scorePercentage={scorePercentage}
+          score={score}
+          totalQuestions={quiz.questions.length}
+          timeElapsed={timeElapsed}
+          onGoToDashboard={goToDashboard}
+        />
       </LayoutAuth>
     );
   }
@@ -102,37 +98,20 @@ const TakeQuizPage = () => {
   return (
     <LayoutAuth>
       {!startTime ? (
-        <div className="flex flex-col items-center justify-center space-y-4">
-          <h1 className="text-2xl font-bold">
-            {decodeURIComponent(quizName as string)}
-          </h1>
-          <div>Total Questions: {quiz.questions.length}</div>
-          <button
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition duration-300"
-            onClick={startQuiz}
-          >
-            Start Quiz
-          </button>
-        </div>
+        <QuizStart
+          quizName={quizName}
+          totalQuestions={quiz.questions.length}
+          onStartQuiz={startQuiz}
+        />
       ) : (
-        <div className="flex flex-col items-center justify-center space-y-4">
-          <div className="absolute top-20 right-0 p-4">Time: {timeElapsed}</div>
-          <div>
-            Question {currentQuestionIndex + 1} of {quiz.questions.length}
-          </div>
-          <div>{quiz.questions[currentQuestionIndex].question}</div>
-          {quiz.questions[currentQuestionIndex].answers.map(
-            (answer: any, index: number) => (
-              <button
-                key={index}
-                className="px-4 py-2 bg-gray-200 text-black rounded hover:bg-gray-300 transition duration-300"
-                onClick={() => submitAnswer(answer)}
-              >
-                {answer.text}
-              </button>
-            ),
-          )}
-        </div>
+        <QuizQuestion
+          question={quiz.questions[currentQuestionIndex].question}
+          answers={quiz.questions[currentQuestionIndex].answers}
+          onAnswerSubmit={submitAnswer}
+          timeElapsed={timeElapsed}
+          currentQuestionIndex={currentQuestionIndex}
+          totalQuestions={quiz.questions.length}
+        />
       )}
     </LayoutAuth>
   );
