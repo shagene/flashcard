@@ -59,7 +59,7 @@ export default async function handler(
       // Insert questions into questions table
       const questionsInsertResponse = await supabase
         .from("questions")
-        .insert(questions);
+        .insert(questionsPrepared);
 
       if (questionsInsertResponse.error) {
         console.error("questions insert error:", questionsInsertResponse.error);

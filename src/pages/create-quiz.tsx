@@ -33,7 +33,10 @@ const CreateQuizPage = () => {
     });
 
     const data = await response.json();
-    if (response.ok) {
+    if (
+      response.ok &&
+      data.message === "Quiz and questions uploaded successfully"
+    ) {
       console.log("Quiz and questions uploaded successfully", data);
       router.push("/dashboard");
     } else {
