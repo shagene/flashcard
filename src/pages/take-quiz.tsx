@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import LayoutAuth from "../components/LayoutAuth";
 import { useAuth } from "@/hooks/useAuth";
@@ -11,6 +11,12 @@ import QuizFinish from "@/components/QuizFinish";
 const TakeQuizPage = () => {
   useAuth();
   const router = useRouter();
+
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    setUserId(localStorage.getItem("userUuid"));
+  }, []);
   const { quizId, quizName } = router.query;
   const [quiz, setQuiz] = useState<{ questions: any[] } | null>(null);
   const [startTime, setStartTime] = useState<Date | null>(null);
@@ -75,7 +81,8 @@ const TakeQuizPage = () => {
           body: JSON.stringify({
             quizId,
             answers: submittedAnswers,
-            timeTaken: timeTaken.toString(), // Ensure timeTaken is converted to a string if it's not already
+            timeTaken: timeTaken.toString(),
+            userId: userId,
           }),
         })
           .then((response) => response.json())

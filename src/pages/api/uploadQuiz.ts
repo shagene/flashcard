@@ -41,7 +41,7 @@ export default async function handler(
       console.log("Latest quiz ID:", quizId);
 
       // Prepare questions for batch insert
-      const flashcards = questions.map(
+      const questionsPrepared = questions.map(
         (question: {
           question: string;
           correct_answer: string;
@@ -56,17 +56,14 @@ export default async function handler(
         }),
       );
 
-      // Insert questions into flashcards table
-      const flashcardsInsertResponse = await supabase
-        .from("flashcards")
-        .insert(flashcards);
+      // Insert questions into questions table
+      const questionsInsertResponse = await supabase
+        .from("questions")
+        .insert(questions);
 
-      if (flashcardsInsertResponse.error) {
-        console.error(
-          "Flashcards insert error:",
-          flashcardsInsertResponse.error,
-        );
-        throw flashcardsInsertResponse.error;
+      if (questionsInsertResponse.error) {
+        console.error("questions insert error:", questionsInsertResponse.error);
+        throw questionsInsertResponse.error;
       }
 
       res

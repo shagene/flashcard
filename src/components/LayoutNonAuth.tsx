@@ -16,7 +16,7 @@ export default function RootLayout({
       <Head>
         <title>Flash Card App</title>
         <meta name="description" content="To help with test prep." />
-        <meta name="keywords" content="flashcards, quizzes, study" />
+        <meta name="keywords" content="questions, quizzes, study" />
         <meta name="author" content="Steven Hagene" />
       </Head>
       <div className={inter.className}>{children}</div>

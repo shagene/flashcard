@@ -1,43 +1,38 @@
-// pages/api/quizApi.ts
 import { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "../../utils/supabaseClient";
+import { v4 as uuidv4 } from "uuid";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
   if (req.method === "GET") {
-    // Extract quizId from query parameters
     const { quizId } = req.query;
-    // Check if quizId is provided in the query parameters
     if (!quizId) {
       return res.status(400).json({ error: "quizId is required" });
     }
 
-    // Fetch quiz details from the Supabase database
     const quizDetails = await fetchQuizDetails(quizId);
 
-    // If quiz details are not found, return an appropriate response
     if (!quizDetails) {
       return res.status(404).json({ error: "Quiz not found" });
     }
 
-    // Respond with the quiz details
     res.status(200).json({ quizDetails });
   } else if (req.method === "POST") {
-    // Extract quizId and answers from request body
     const { quizId, answers } = req.body;
-
-    // Submit the answers to the server and get the results
-    const result = await submitQuizAnswers(quizId, answers, req.body.timeTaken);
-
-    // Respond with the result of the submission
+    if (!req.body.userId) {
+      return res.status(400).json({ error: "userId is required" });
+    }
+    const result = await submitQuizAnswers(
+      quizId,
+      answers,
+      req.body.timeTaken,
+      req.body.userId,
+    );
     res.status(200).json({ result });
   } else {
-    // Set the allowed HTTP methods for this API route
     res.setHeader("Allow", ["GET", "POST"]);
-
-    // Return a 405 Method Not Allowed error for unsupported HTTP methods
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }
@@ -47,12 +42,11 @@ export const fetchQuizDetails = async (
 ) => {
   if (!quizId) return null;
   let { data, error } = await supabase
-    .from("flashcards")
+    .from("questions")
     .select("*")
     .eq("quiz_id", quizId);
 
   if (error) {
-    console.error("Error fetching quiz details:", error);
     return null;
   }
 
@@ -61,14 +55,60 @@ export const fetchQuizDetails = async (
 
 export const submitQuizAnswers = async (
   quizId: string | string[] | undefined,
-  answers: Array<{ questionId: any; isCorrect: boolean }> | undefined,
-  timeTaken: string, // Ensure this matches the expected type
+  answers:
+    | Array<{ questionId: string; selectedAnswer: string; isCorrect: boolean }>
+    | undefined,
+  timeTaken: string,
+  userId: string,
 ) => {
-  console.log("Received data for submission:", { quizId, answers, timeTaken });
-  // Implement the actual submission logic here.
-  // For demonstration, we'll just return a success message and time taken.
+  let score = answers?.filter((answer) => answer.isCorrect).length ?? 0;
+
+  const insertResponse = await supabase
+    .from("user_quiz_attempts")
+    .insert({
+      user_id: userId,
+      quiz_id: quizId,
+      attempt_timestamp: new Date().toISOString(),
+      score: score,
+      time_taken: timeTaken,
+    })
+    .single();
+
+  const { data: attemptData, error: attemptError } = insertResponse;
+
+  if (attemptError) {
+    return { error: attemptError.message };
+  }
+
+  if (!attemptData) {
+    return { error: "Failed to retrieve attempt ID after insertion." };
+  }
+
+  const attemptId = (attemptData as any)?.id;
+  if (!attemptId) {
+    return { error: "Failed to retrieve attempt ID after insertion." };
+  }
+
+  for (const answer of answers ?? []) {
+    const responsePayload = {
+      attempt_id: attemptId,
+      question_id: answer.questionId,
+      selected_answer: answer.selectedAnswer,
+      is_correct: answer.isCorrect,
+      created_at: new Date().toISOString(),
+    };
+
+    const { error: responseError } = await supabase
+      .from("user_quiz_responses")
+      .insert([responsePayload]);
+
+    if (responseError) {
+    }
+  }
+
   return {
     message: "Quiz answers submitted successfully",
-    timeElapsed: timeTaken,
+    score: score,
+    timeTaken: timeTaken,
   };
 };
