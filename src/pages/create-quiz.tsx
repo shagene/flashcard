@@ -73,7 +73,7 @@ const CreateQuizPage = () => {
         <h1 className="text-5xl font-bold">Create Quiz</h1>
         <form onSubmit={handleSubmit} className="space-y-4 mx-4">
           <div>
-            <label htmlFor="quizName" className="block mb-2">
+            <label htmlFor="quizName" className="block mt-4 mb-2 text-lg">
               Quiz Name:
             </label>
             <input

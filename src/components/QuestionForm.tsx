@@ -24,7 +24,7 @@ const QuestionForm = ({
   <div className="mt-8">
     <table className="table-auto w-full">
       <thead className="bg-gray-50">
-        <tr>
+        <tr className="text-lg">
           <th>Question</th>
           <th>Correct Answer</th>
           <th>Incorrect Answer 1</th>

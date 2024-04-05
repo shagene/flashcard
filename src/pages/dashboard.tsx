@@ -22,7 +22,7 @@ const Dashboard: React.FC = () => {
     <Layout>
       <div className="text-center">
         <h1 className="text-5xl font-bold text-indigo-600 my-6">Dashboard</h1>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
           <DashboardCard
             title="Create Quiz"
             description="Start crafting your own quizzes with ease. Use our intuitive interface to build engaging quizzes for your audience. Add questions, set time limits, and customize to your heart's content."
@@ -33,7 +33,7 @@ const Dashboard: React.FC = () => {
             <QuizOverview />
           </DashboardCard>
           <DashboardCard
-            title="View Quiz Results"
+            title="Quiz Results"
             description="Dive into the details of the quizzes that you have taken. Explore comprehensive results, analyze your strengths, and identify areas for improvement. Get insights on question-wise performance and overall scores."
             buttonText="View"
             onButtonClick={handleViewResults}

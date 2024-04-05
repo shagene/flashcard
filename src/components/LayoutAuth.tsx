@@ -68,9 +68,9 @@ const LayoutAuth = ({ children }: Props) => {
       </Head>
       <div className={inter.className}>
         <div className="appbar">
-          <div className="title">Flash Card App</div>
+          <div className="title text-lg">Flash Card App</div>
 
-          <div className="user-info">
+          <div className="user-info text-lg">
             {userEmail ? <span>{userEmail}</span> : <span>No email found</span>}
             <button
               onClick={handleLogout}
@@ -83,7 +83,7 @@ const LayoutAuth = ({ children }: Props) => {
         <div className="link-wrapper">
           {!isDashboard && (
             <Link href="/dashboard">
-              <span className="dashboard-link">
+              <span className="dashboard-link text-lg">
                 <RiArrowGoBackFill /> Back to Dashboard
               </span>
             </Link>
@@ -104,21 +104,7 @@ const LayoutAuth = ({ children }: Props) => {
         .user-info span {
           margin-right: 1rem; /* 1rem remains the same */
         }
-        .logout-button {
-          background-color: #0070f3;
-          color: #fff;
-          border: none;
-          padding: 0.5rem 1rem; /* Adjusted to rem */
-          cursor: pointer;
-          border-radius: 0.3125rem; /* 5px converted to rem */
-          transition:
-            background-color 0.3s,
-            color 0.3s;
-        }
-        .logout-button:hover {
-          background-color: #0056b3;
-          color: #e0e0e0;
-        }
+
         .link-wrapper {
           margin-top: 1rem;
           margin-left: 1rem;
