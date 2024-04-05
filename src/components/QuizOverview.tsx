@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
 // Defines the structure of the Quiz object
@@ -20,6 +20,8 @@ const QuizOverview: React.FC = () => {
     direction: "ascending" | "descending" | null;
   }>({ key: null, direction: null });
   const [isLoading, setIsLoading] = useState(true);
+
+  const router = useRouter();
 
   useEffect(() => {
     // Fetches quiz overview data from the API when the component mounts
@@ -138,7 +140,9 @@ const QuizOverview: React.FC = () => {
                 <tr
                   key={quiz.quiz_id}
                   onClick={() =>
-                    (window.location.href = `/take-quiz?quizId=${quiz.quiz_id}&quizName=${encodeURIComponent(quiz.quiz_name)}`)
+                    router.push(
+                      `/take-quiz?quizId=${quiz.quiz_id}&quizName=${encodeURIComponent(quiz.quiz_name)}`,
+                    )
                   }
                   style={{ cursor: "pointer" }}
                 >

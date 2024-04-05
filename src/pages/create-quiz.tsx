@@ -1,10 +1,12 @@
-// File: src/pages/CreateQuizPage.tsx
+// File: src/pages/create-quiz.tsx
 import Layout from "../components/LayoutAuth";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { useAuth } from "@/hooks/useAuth";
 import QuestionForm from "@/components/QuestionForm";
 import { initialQuestion } from "@/utils/quizHelpers";
+import QuestionUpload from "@/components/QuestionUpload";
+import { Question } from "@/types/Question";
 
 const CreateQuizPage = () => {
   useAuth(); // Protect the page
@@ -61,27 +63,29 @@ const CreateQuizPage = () => {
     setQuizQuestions(quizQuestions.filter((_, i) => i !== index));
   };
 
+  const handleQuestionsUploaded = (questions: Question[]) => {
+    setQuizQuestions(questions);
+  };
+
   return (
     <Layout>
       <div className="text-center">
         <h1 className="text-2xl font-bold">Create Quiz</h1>
         <form onSubmit={handleSubmit} className="space-y-4 mx-4">
           <div>
-            <label
-              htmlFor="quizName"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Quiz Name
+            <label htmlFor="quizName" className="block mb-2">
+              Quiz Name:
             </label>
             <input
               type="text"
               id="quizName"
               value={quizName}
               onChange={(e) => setQuizName(e.target.value)}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="border border-gray-300 px-2 py-1 rounded"
               required
             />
           </div>
+          <QuestionUpload onQuestionsUploaded={handleQuestionsUploaded} />
           <QuestionForm
             quizQuestions={quizQuestions}
             updateQuizQuestions={updateQuizQuestions}

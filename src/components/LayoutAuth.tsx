@@ -14,27 +14,35 @@ type Props = {
 };
 
 const LayoutAuth = ({ children }: Props) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
   const [userEmail, setUserEmail] = useState("");
   const router = useRouter(); // Use the useRouter hook
   const isDashboard = router.pathname === "/dashboard";
 
   useEffect(() => {
-    const email = localStorage.getItem("userEmail");
-    if (email) {
-      setUserEmail(email);
-    }
+    const updateUserEmail = () => {
+      const email = localStorage.getItem("userEmail");
+      if (email) {
+        setUserEmail(email);
+      }
+    };
 
-    // Set a timeout for auto logout after 2 minutes
-    // const timeout = setTimeout(() => {
-    //   handleLogout();
-    // }, 120000); // 120000 milliseconds = 2 minutes
+    updateUserEmail(); // Call the function initially
+
+    const handleRouteChange = () => {
+      updateUserEmail();
+    };
+
+    router.events.on("routeChangeComplete", handleRouteChange);
 
     // Add event listener for tab or browser close
     window.addEventListener("beforeunload", handleLogout);
 
-    // Cleanup function to clear the timeout and remove event listener
+    // Cleanup function to remove event listeners
     return () => {
-      // clearTimeout(timeout);
+      router.events.off("routeChangeComplete", handleRouteChange);
       window.removeEventListener("beforeunload", handleLogout);
     };
   }, []);
@@ -46,6 +54,8 @@ const LayoutAuth = ({ children }: Props) => {
 
     // Redirect to the home page or sign-in page
     router.push("/"); // Adjust the path as needed
+
+    setLoading(false);
   };
 
   return (
