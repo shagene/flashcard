@@ -3,3 +3,13 @@
 @tailwind utilities;
 
 /* Add to your global CSS file (e.g., globals.css) */
+.table-auto thead::after {
+  content: "";
+  display: block;
+  height: 1rem; /* Adjust the height for the desired margin */
+}
+
+.overflow-x-auto {
+  overflow-y: auto;
+  max-height: calc(100vh - 800px);
+}

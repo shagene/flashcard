@@ -25,7 +25,7 @@ const Dashboard: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
           <DashboardCard
             title="Create Quiz"
-            description="Create your own quizzes."
+            description="Start crafting your own quizzes with ease. Use our intuitive interface to build engaging quizzes for your audience. Add questions, set time limits, and customize to your heart's content."
             buttonText="Create"
             onButtonClick={handleCreateQuiz}
           />
@@ -34,7 +34,7 @@ const Dashboard: React.FC = () => {
           </DashboardCard>
           <DashboardCard
             title="View Quiz Results"
-            description="Check out your quiz results."
+            description="Dive into the details of the quizzes that you have taken. Explore comprehensive results, analyze your strengths, and identify areas for improvement. Get insights on question-wise performance and overall scores."
             buttonText="View"
             onButtonClick={handleViewResults}
           />
