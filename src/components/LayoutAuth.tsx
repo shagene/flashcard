@@ -72,7 +72,10 @@ const LayoutAuth = ({ children }: Props) => {
 
           <div className="user-info">
             {userEmail ? <span>{userEmail}</span> : <span>No email found</span>}
-            <button onClick={handleLogout} className="text-lg logout-button">
+            <button
+              onClick={handleLogout}
+              className="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 logout-button"
+            >
               Log Out
             </button>
           </div>

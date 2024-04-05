@@ -94,7 +94,7 @@ const CreateQuizPage = () => {
           />
           <button
             type="submit"
-            className="submit-button mt-4 px-4 py-2 bg-blue-500 text-lg text-white rounded"
+            className="mt-4 px-4 py-2 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             Submit
           </button>

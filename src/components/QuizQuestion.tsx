@@ -33,7 +33,7 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
       {answers.map((answer, index) => (
         <button
           key={index}
-          className="px-4 py-2 bg-gray-200 text-lg text-black rounded hover:bg-gray-300 transition duration-300"
+          className="px-4 py-2 bg-gray-200 border border-transparent rounded-md shadow-sm text-lg font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 hover:bg-gray-300 transition duration-300"
           onClick={() => onAnswerSubmit(answer)}
         >
           {answer.text}
