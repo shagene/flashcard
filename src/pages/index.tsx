@@ -10,7 +10,7 @@ const HomePage = () => {
   return (
     <Layout>
       <div className="flex flex-col items-center justify-center min-h-screen space-y-8 ">
-        <h1 className="text-4xl font-bold text-gray-700">Flash Card App</h1>
+        <h1 className="text-5xl font-bold text-gray-700">Flash Card App</h1>
         <div className="w-full max-w-md">
           {!showSignup ? (
             <SigninForm setShowSignup={setShowSignup} />

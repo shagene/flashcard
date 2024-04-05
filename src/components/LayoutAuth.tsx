@@ -72,7 +72,7 @@ const LayoutAuth = ({ children }: Props) => {
 
           <div className="user-info">
             {userEmail ? <span>{userEmail}</span> : <span>No email found</span>}
-            <button onClick={handleLogout} className="logout-button">
+            <button onClick={handleLogout} className="text-lg logout-button">
               Log Out
             </button>
           </div>

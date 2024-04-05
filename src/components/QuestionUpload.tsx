@@ -78,7 +78,7 @@ const QuestionUpload = ({
       <button
         type="button"
         onClick={openModal}
-        className="btn bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors duration-200"
+        className="btn bg-blue-500 text-lg text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors duration-200"
       >
         Mass Upload Questions
       </button>
@@ -86,12 +86,12 @@ const QuestionUpload = ({
         <div className="modal fixed inset-0 flex items-center justify-center z-50">
           <div className="modal-overlay absolute inset-0 bg-black opacity-50"></div>
           <div className="modal-content bg-white p-6 rounded-md shadow-lg relative z-10 w-3/4">
-            <h2 className="text-2xl font-bold mb-4">Mass Upload Questions</h2>
-            <p className="mb-4">
+            <h2 className="text-3xl font-bold mb-4">Mass Upload Questions</h2>
+            <p className="text-lg mb-4">
               Please upload a CSV file or paste CSV data with the following
               format:
             </p>
-            <pre className="bg-gray-100 p-4 rounded-md mb-4 overflow-auto">
+            <pre className="text-lg bg-gray-100 p-4 rounded-md mb-4 overflow-auto">
               question,correct_answer,incorrect_answer1,incorrect_answer2,incorrect_answer3
               {"\n"}
               What is the capital of France?,Paris,London,Berlin,Madrid{"\n"}
@@ -107,7 +107,7 @@ const QuestionUpload = ({
               onChange={handleFileUpload}
               className="mb-4"
             />
-            <p className="mb-2">Or paste CSV data:</p>
+            <p className="text-lg mb-2">Or paste CSV data:</p>
             <textarea
               value={csvData}
               onChange={(e) => setCsvData(e.target.value)}
@@ -116,15 +116,15 @@ const QuestionUpload = ({
             <button
               type="button"
               onClick={handlePastedData}
-              className="btn bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors duration-200 mr-2"
+              className="btn bg-blue-500 text-lg text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors duration-200 mr-2"
             >
               Upload Pasted Data
             </button>
-            {error && <p className="text-red-500 mb-4">{error}</p>}
+            {error && <p className="text-lg text-red-500 mb-4">{error}</p>}
             <button
               type="button"
               onClick={closeModal}
-              className="btn bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition-colors duration-200"
+              className="btn bg-gray-300 text-lg text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition-colors duration-200"
             >
               Close
             </button>

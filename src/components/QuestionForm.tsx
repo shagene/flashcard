@@ -71,7 +71,7 @@ const QuestionForm = ({
                 <button
                   type="button"
                   onClick={addQuestion}
-                  className="mr-2 text-green-600"
+                  className="mr-2 justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium   focus:outline-none focus:ring-2 focus:ring-offset-2  text-green-600"
                 >
                   <FiPlusCircle size={24} />
                 </button>
@@ -80,7 +80,7 @@ const QuestionForm = ({
                 <button
                   type="button"
                   onClick={() => deleteQuestion(index)}
-                  className="text-red-600"
+                  className="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 text-red-600"
                 >
                   <FiMinusCircle size={24} />
                 </button>

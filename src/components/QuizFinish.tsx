@@ -18,14 +18,14 @@ const QuizFinish: React.FC<QuizFinishProps> = ({
 }) => {
   return (
     <div className="flex flex-col items-center justify-center space-y-4">
-      <h1 className="text-2xl font-bold">Quiz Finished!</h1>
+      <h1 className="text-5xl font-bold">Quiz Finished!</h1>
       <div>
         Your score: {scorePercentage.toFixed(2)}% ({score} out of{" "}
         {totalQuestions})
       </div>
       <div>Time taken: {timeElapsed}</div>
       <button
-        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition duration-300"
+        className="px-4 py-2 bg-blue-500 text-lg text-white rounded hover:bg-blue-700 transition duration-300"
         onClick={onGoToDashboard}
       >
         Go to Dashboard

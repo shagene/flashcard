@@ -33,12 +33,12 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
   return (
     <div className="border p-6 rounded-lg shadow-lg bg-white hover:shadow-xl transition-shadow duration-300 ease-in-out max-h-96 overflow-auto">
       {/* Display the title as a heading with specific styling */}
-      <h2 className="font-semibold text-xl text-indigo-600">{title}</h2>
-      {description && <p className="mt-2">{description}</p>}
+      <h2 className="font-semibold text-3xl text-indigo-600">{title}</h2>
+      {description && <p className="text-lg mt-2">{description}</p>}
       {children}
       {buttonText && onButtonClick && (
         <button
-          className="mt-4 px-4 py-2 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          className="mt-4 px-4 py-2 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           onClick={onButtonClick}
         >
           {buttonText}

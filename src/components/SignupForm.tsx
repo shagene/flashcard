@@ -46,17 +46,17 @@ const SignupForm: React.FC<SignupFormProps> = ({ setShowSignup }) => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          className="text-lg w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
           {loading ? "Signing Up..." : "Sign Up"}
         </button>
       </form>
       {error && <p className="text-red-500">{error}</p>}
-      <p className="text-center">
+      <p className="text-lg text-center">
         Already have an ID?{" "}
         <button
           onClick={() => setShowSignup(false)}
-          className="text-indigo-600 hover:text-indigo-800"
+          className="text-lg text-indigo-600 hover:text-indigo-800"
         >
           Click here to sign in
         </button>

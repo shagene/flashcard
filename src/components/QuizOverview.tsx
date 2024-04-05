@@ -97,38 +97,37 @@ const QuizOverview: React.FC = () => {
   // Renders the quiz overview table with sortable columns and quiz data
   return (
     <div>
-      <h3 className="text-lg font-semibold">Available Quizzes</h3>
       {fetchedQuizzes.length > 0 ? (
         <div className="overflow-x-auto">
           <table className="w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
                 <th
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                  className="px-6 py-3 text-left text-lg font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
                   onClick={() => requestSort("quiz_name")}
                 >
                   Quiz Name
                 </th>
                 <th
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                  className="px-6 py-3 text-left text-lg font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
                   onClick={() => requestSort("num_questions")}
                 >
                   Questions
                 </th>
                 <th
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                  className="px-6 py-3 text-left text-lg font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
                   onClick={() => requestSort("attempts_taken")}
                 >
                   Attempts Taken
                 </th>
                 <th
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                  className="px-6 py-3 text-left text-lg font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
                   onClick={() => requestSort("last_attempt_time")}
                 >
                   Last Attempt Time
                 </th>
                 <th
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                  className="px-6 py-3 text-left text-lg font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
                   onClick={() => requestSort("last_score")}
                 >
                   Last Score
@@ -146,19 +145,19 @@ const QuizOverview: React.FC = () => {
                   }
                   style={{ cursor: "pointer" }}
                 >
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4 text-lg whitespace-nowrap">
                     {quiz.quiz_name}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4 text-lg whitespace-nowrap">
                     {quiz.num_questions}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4 text-lg whitespace-nowrap">
                     {quiz.attempts_taken}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4 text-lg whitespace-nowrap">
                     {quiz.last_attempt_time || "N/A"}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4 text-lg whitespace-nowrap">
                     {quiz.last_score || "N/A"}
                   </td>
                 </tr>
@@ -167,7 +166,7 @@ const QuizOverview: React.FC = () => {
           </table>
         </div>
       ) : (
-        <p>No quizzes available.</p>
+        <p className="text-lg">No quizzes available.</p>
       )}
     </div>
   );

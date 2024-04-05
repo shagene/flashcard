@@ -70,7 +70,7 @@ const CreateQuizPage = () => {
   return (
     <Layout>
       <div className="text-center">
-        <h1 className="text-2xl font-bold">Create Quiz</h1>
+        <h1 className="text-5xl font-bold">Create Quiz</h1>
         <form onSubmit={handleSubmit} className="space-y-4 mx-4">
           <div>
             <label htmlFor="quizName" className="block mb-2">
@@ -94,7 +94,7 @@ const CreateQuizPage = () => {
           />
           <button
             type="submit"
-            className="submit-button mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+            className="submit-button mt-4 px-4 py-2 bg-blue-500 text-lg text-white rounded"
           >
             Submit
           </button>

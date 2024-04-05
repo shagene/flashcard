@@ -9,8 +9,8 @@ const ViewResultsPage = () => {
   return (
     <Layout>
       <div className="text-center">
-        <h1 className="text-2xl font-bold">Results</h1>
-        <p>Welcome to your results page!</p>
+        <h1 className="text-5xl font-bold">Results</h1>
+        <p className="text-lg">Welcome to your results page!</p>
       </div>
     </Layout>
   );

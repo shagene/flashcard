@@ -21,7 +21,7 @@ const Dashboard: React.FC = () => {
   return (
     <Layout>
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-indigo-600 my-6">Dashboard</h1>
+        <h1 className="text-5xl font-bold text-indigo-600 my-6">Dashboard</h1>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
           <DashboardCard
             title="Create Quiz"
@@ -29,7 +29,7 @@ const Dashboard: React.FC = () => {
             buttonText="Create"
             onButtonClick={handleCreateQuiz}
           />
-          <DashboardCard title="Quiz Overview">
+          <DashboardCard title="Available Quizzes">
             <QuizOverview />
           </DashboardCard>
           <DashboardCard
