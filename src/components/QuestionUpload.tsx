@@ -40,15 +40,18 @@ const QuestionUpload = ({
     } as Papa.ParseConfig);
   };
 
-  const handleParsedData = (results: Papa.ParseResult<Question>) => {
-    const questions = results.data.map((q) => ({
-      ...q,
-      incorrect_answers: [
-        q.incorrect_answers[0],
-        q.incorrect_answers[1],
-        q.incorrect_answers[2],
-      ].filter((answer) => answer !== undefined),
-    }));
+  const handleParsedData = (results: Papa.ParseResult<any>) => {
+    const questions = results.data
+      .filter((q) => q.question && q.correct_answer) // Filter out rows without question or correct_answer
+      .map((q) => ({
+        question: q.question.trim(),
+        correct_answer: q.correct_answer.trim(),
+        incorrect_answers: [
+          q.incorrect_answer1?.trim(),
+          q.incorrect_answer2?.trim(),
+          q.incorrect_answer3?.trim(),
+        ].filter(Boolean), // This removes any undefined, null, or empty strings
+      }));
 
     const isValid = questions.every(
       (q) =>
