@@ -73,7 +73,7 @@ const CreateQuizPage = () => {
         <h1 className="text-5xl font-bold">Create Quiz</h1>
         <form onSubmit={handleSubmit} className="space-y-4 mx-4">
           <div>
-            <label htmlFor="quizName" className="block mt-4 mb-2 text-lg">
+            <label htmlFor="quizName" className="block mt-4 mb-2 text-3xl">
               Quiz Name:
             </label>
             <input
@@ -83,6 +83,25 @@ const CreateQuizPage = () => {
               onChange={(e) => setQuizName(e.target.value)}
               className="border border-gray-300 px-2 py-1 rounded"
               required
+              minLength={3}
+              maxLength={50}
+              pattern="(?:\s*[\S\s]*){3,50}"
+              title="Quiz name must be between 3 and 50 characters and can contain letters, numbers, spaces, and special characters"
+              onInvalid={(e) => {
+                const target = e.target as HTMLInputElement;
+                const nonSpaceCount = quizName.trim().length;
+                if (nonSpaceCount < 3) {
+                  target.setCustomValidity(
+                    "Quiz name must have at least 3 characters",
+                  );
+                } else if (nonSpaceCount > 50) {
+                  target.setCustomValidity(
+                    "Quiz name cannot exceed 50 characters",
+                  );
+                } else {
+                  target.setCustomValidity("");
+                }
+              }}
             />
           </div>
           <QuestionUpload onQuestionsUploaded={handleQuestionsUploaded} />

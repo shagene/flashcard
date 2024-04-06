@@ -16,8 +16,21 @@ const QuestionInput: React.FC<QuestionInputProps> = ({
       onChange={(e) => onChange(e.target.value)}
       className="input border border-gray-300 rounded-md shadow-sm py-2 px-3 mb-4"
       required
-      rows={2} // Adjust the number of rows as needed
-      style={{ resize: "none" }} // Prevents resizing
+      minLength={1}
+      maxLength={500}
+      rows={2}
+      style={{ resize: "none" }}
+      onInvalid={(e) => {
+        const target = e.target as HTMLTextAreaElement;
+        const nonSpaceCount = value.trim().length;
+        if (nonSpaceCount < 1) {
+          target.setCustomValidity("Question must have at least 1 character");
+        } else if (nonSpaceCount > 500) {
+          target.setCustomValidity("Question cannot exceed 500 characters");
+        } else {
+          target.setCustomValidity("");
+        }
+      }}
     />
   </td>
 );
