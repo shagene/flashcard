@@ -35,7 +35,6 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
       className="border p-6 rounded-lg shadow-lg bg-white hover:shadow-xl transition-shadow duration-300 ease-in-out min-h-full overflow-auto"
       style={{ minWidth: "18.75rem", minHeight: "25.50rem" }}
     >
-      {/* <div className="border p-6 rounded-lg shadow-lg bg-white hover:shadow-xl transition-shadow duration-300 ease-in-out max-h-full overflow-auto"> */}
       {/* Display the title as a heading with specific styling */}
       <h2 className="font-semibold text-3xl text-indigo-600">{title}</h2>
       {description && <p className="text-lg mt-2">{description}</p>}
