@@ -98,7 +98,7 @@ const QuizOverview: React.FC = () => {
   return (
     <div>
       {fetchedQuizzes.length > 0 ? (
-        <div className="overflow-x-auto">
+        <div>
           <table className="w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
