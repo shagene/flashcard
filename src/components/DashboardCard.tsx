@@ -31,7 +31,11 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
   // The card is a div with various CSS classes for styling
   // Inside the div, there are conditionally rendered elements based on the props
   return (
-    <div className="border p-6 rounded-lg shadow-lg bg-white hover:shadow-xl transition-shadow duration-300 ease-in-out max-h-96 overflow-auto">
+    <div
+      className="border p-6 rounded-lg shadow-lg bg-white hover:shadow-xl transition-shadow duration-300 ease-in-out min-h-full overflow-auto"
+      style={{ minWidth: "18.75rem", minHeight: "25.50rem" }}
+    >
+      {/* <div className="border p-6 rounded-lg shadow-lg bg-white hover:shadow-xl transition-shadow duration-300 ease-in-out max-h-full overflow-auto"> */}
       {/* Display the title as a heading with specific styling */}
       <h2 className="font-semibold text-3xl text-indigo-600">{title}</h2>
       {description && <p className="text-lg mt-2">{description}</p>}

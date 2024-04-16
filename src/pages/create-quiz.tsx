@@ -71,6 +71,13 @@ const CreateQuizPage = () => {
     <Layout>
       <div className="text-center">
         <h1 className="text-5xl font-bold">Create Quiz</h1>
+        <p className="text-lg text-gray-500 mt-4">
+          Click{" "}
+          <a href="/ai-chat" className="text-blue-500 hover:underline">
+            here
+          </a>{" "}
+          to chat with AI to create your quiz.
+        </p>
         <form onSubmit={handleSubmit} className="space-y-4 mx-4">
           <div>
             <label htmlFor="quizName" className="block mt-4 mb-2 text-3xl">
@@ -104,7 +111,9 @@ const CreateQuizPage = () => {
               }}
             />
           </div>
-          <QuestionUpload onQuestionsUploaded={handleQuestionsUploaded} />
+          <div className="flex justify-end">
+            <QuestionUpload onQuestionsUploaded={handleQuestionsUploaded} />
+          </div>
           <QuestionForm
             quizQuestions={quizQuestions}
             updateQuizQuestions={updateQuizQuestions}
