@@ -167,7 +167,7 @@ const QuizOverview: React.FC = () => {
                       : "N/A"}
                   </td>
                   <td className="px-6 py-4 text-center text-lg whitespace-nowrap">
-                    {quiz.last_score || "N/A"}
+                    {quiz.last_score !== null ? quiz.last_score : "N/A"}
                   </td>
                 </tr>
               ))}

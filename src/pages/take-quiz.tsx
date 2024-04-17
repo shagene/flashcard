@@ -56,13 +56,15 @@ const TakeQuizPage = () => {
   const submitAnswer = async (answer: any): Promise<void> => {
     if (quiz && currentQuestionIndex < quiz.questions.length) {
       const isCorrect = answer.isCorrect;
+      const updatedAnswers = [
+        ...submittedAnswers,
+        { questionId: quiz.questions[currentQuestionIndex].id, isCorrect },
+      ];
+
       if (isCorrect) {
         setScore((prevScore) => prevScore + 1);
       }
-      setSubmittedAnswers((prevAnswers) => [
-        ...prevAnswers,
-        { questionId: quiz.questions[currentQuestionIndex].id, isCorrect },
-      ]);
+      setSubmittedAnswers(updatedAnswers);
 
       const nextQuestionIndex = currentQuestionIndex + 1;
       if (nextQuestionIndex < quiz.questions.length) {
@@ -71,7 +73,6 @@ const TakeQuizPage = () => {
         setQuizFinished(true);
         setStopTime(new Date());
         const quizId = router.query.quizId;
-        // Ensure timeElapsed is calculated or updated before this point
         const timeTaken = timeElapsed; // Make sure timeElapsed is correctly updated before this line
         fetch("/api/takeQuiz", {
           method: "POST",
@@ -80,7 +81,7 @@ const TakeQuizPage = () => {
           },
           body: JSON.stringify({
             quizId,
-            answers: submittedAnswers,
+            answers: updatedAnswers, // Use updatedAnswers to ensure the last answer is included
             timeTaken: timeTaken.toString(),
             userId: userId,
           }),
