@@ -21,21 +21,22 @@ const QuestionForm = ({
   addQuestion,
   deleteQuestion,
 }: QuestionFormProps) => (
-  <div className="mt-8">
-    <table className="table-auto w-full">
-      <thead className="bg-gray-50">
-        <tr className="text-lg">
-          <th>Question</th>
-          <th>Correct Answer</th>
-          <th>Incorrect Answer 1</th>
-          <th>Incorrect Answer 2</th>
-          <th>Incorrect Answer 3</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody className="bg-white">
+  <div className="mt-8 overflow-x-auto">
+    <div className="flex flex-col w-full">
+      <div className="bg-gray-50 text-lg grid grid-cols-6 gap-4 p-4 min-w-max">
+        <span>Question</span>
+        <span>Correct Answer</span>
+        <span>Incorrect Answer 1</span>
+        <span>Incorrect Answer 2</span>
+        <span>Incorrect Answer 3</span>
+        <span>Actions</span>
+      </div>
+      <div className="bg-white">
         {quizQuestions.map((q, index) => (
-          <tr key={index} className="mb-4">
+          <div
+            key={index}
+            className="mb-4 grid grid-cols-6 gap-4 p-4 min-w-max"
+          >
             <QuestionInput
               label="Question"
               value={q.question}
@@ -64,7 +65,7 @@ const QuestionForm = ({
                 }
               />
             ))}
-            <td
+            <div
               className={`flex items-center justify-center ${index === 0 ? "pt-5" : ""}`}
             >
               {index === quizQuestions.length - 1 && (
@@ -80,16 +81,16 @@ const QuestionForm = ({
                 <button
                   type="button"
                   onClick={() => deleteQuestion(index)}
-                  className="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium focus:outline-none  text-red-600"
+                  className="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium focus:outline-none text-red-600"
                 >
                   <FiMinusCircle size={24} />
                 </button>
               )}
-            </td>
-          </tr>
+            </div>
+          </div>
         ))}
-      </tbody>
-    </table>
+      </div>
+    </div>
   </div>
 );
 
