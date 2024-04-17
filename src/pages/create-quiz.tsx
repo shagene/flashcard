@@ -78,7 +78,7 @@ const CreateQuizPage = () => {
           </a>{" "}
           to chat with AI to create your quiz.
         </p>
-        <form onSubmit={handleSubmit} className="space-y-4 mx-4">
+        <form onSubmit={handleSubmit} className="space-y-4 mx-4 mb-4">
           <div>
             <label htmlFor="quizName" className="block mt-4 mb-2 text-3xl">
               Quiz Name:

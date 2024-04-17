@@ -65,8 +65,9 @@ const QuestionForm = ({
                 }
               />
             ))}
+
             <div
-              className={`flex items-center justify-center ${index === 0 ? "pt-5" : ""}`}
+              className={`flex items-center justify-center ${index === 0 ? "pt-5" : "pt-0"}`}
             >
               {index === quizQuestions.length - 1 && (
                 <button

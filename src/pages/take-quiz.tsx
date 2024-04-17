@@ -109,6 +109,24 @@ const TakeQuizPage = () => {
 
   if (quizFinished) {
     const scorePercentage = (score / quiz.questions.length) * 100;
+    const missedQuestions = submittedAnswers
+      .filter((answer) => !answer.isCorrect)
+      .map((answer) => {
+        const question = quiz.questions.find((q) => q.id === answer.questionId);
+        const userAnswer = question.answers.find(
+          (a: { isCorrect: boolean; text: string }) =>
+            a.isCorrect === answer.isCorrect,
+        ).text;
+        const correctAnswer = question.answers.find(
+          (a: { isCorrect: boolean; text: string }) => a.isCorrect,
+        ).text;
+        return {
+          question: question.question,
+          userAnswer,
+          correctAnswer,
+        };
+      });
+
     return (
       <LayoutAuth>
         <QuizFinish
@@ -117,6 +135,7 @@ const TakeQuizPage = () => {
           totalQuestions={quiz.questions.length}
           timeElapsed={timeElapsed}
           onGoToDashboard={goToDashboard}
+          missedQuestions={missedQuestions}
         />
       </LayoutAuth>
     );
