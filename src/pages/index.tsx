@@ -1,26 +1,32 @@
-// src/pages/index.tsx
-import React, { useState } from "react";
+// src/pages/landing.tsx
+import React from "react";
 import Layout from "../components/LayoutNonAuth";
-import SigninForm from "../components/SigninForm";
-import SignupForm from "../components/SignupForm";
+import Link from "next/link";
 
-const HomePage = () => {
-  const [showSignup, setShowSignup] = useState(false);
-
+const LandingPage = () => {
   return (
     <Layout>
-      <div className="flex flex-col items-center justify-center min-h-screen space-y-8 ">
-        <h1 className="text-5xl font-bold text-gray-700">Flash Card App</h1>
-        <div className="w-full max-w-md">
-          {!showSignup ? (
-            <SigninForm setShowSignup={setShowSignup} />
-          ) : (
-            <SignupForm setShowSignup={setShowSignup} />
-          )}
+      <div className="flex flex-col items-center justify-center min-h-screen space-y-8">
+        <h1 className="text-5xl font-bold text-gray-700">Quiz App</h1>
+        <p className="text-xl text-gray-600">
+          Welcome to the Quiz App! Create, manage, and study with custom
+          quizzes.
+        </p>
+        <div className="space-x-4">
+          <Link href="/auth">
+            <button className="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700">
+              Get Started
+            </button>
+          </Link>
+          <Link href="/blog">
+            <button className="px-4 py-2 font-bold text-white bg-gray-500 rounded hover:bg-gray-700">
+              Blog / Change Log
+            </button>
+          </Link>
         </div>
       </div>
     </Layout>
   );
 };
 
-export default HomePage;
+export default LandingPage;

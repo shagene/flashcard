@@ -61,14 +61,14 @@ const LayoutAuth = ({ children }: Props) => {
   return (
     <>
       <Head>
-        <title>Flash Card App</title>
+        <title>Quiz App</title>
         <meta name="description" content="To help with test prep." />
         <meta name="keywords" content="questions, quizzes, study" />
         <meta name="author" content="Steven Hagene" />
       </Head>
       <div className={inter.className}>
         <div className="appbar">
-          <div className="title text-lg">Flash Card App</div>
+          <div className="title text-lg">Quiz App</div>
 
           <div className="user-info text-lg">
             {userEmail ? <span>{userEmail}</span> : <span>No email found</span>}

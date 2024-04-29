@@ -14,7 +14,7 @@ export default function RootLayout({
   return (
     <>
       <Head>
-        <title>Flash Card App</title>
+        <title>Quiz App</title>
         <meta name="description" content="To help with test prep." />
         <meta name="keywords" content="questions, quizzes, study" />
         <meta name="author" content="Steven Hagene" />
