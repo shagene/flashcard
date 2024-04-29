@@ -24,7 +24,7 @@ const CreateQuizPage = () => {
       questions: quizQuestions,
     };
 
-    console.log("Submitting:", quizData);
+    // console.log("Submitting:", quizData);
 
     const response = await fetch("/api/uploadQuiz", {
       method: "POST",
@@ -39,7 +39,7 @@ const CreateQuizPage = () => {
       response.ok &&
       data.message === "Quiz and questions uploaded successfully"
     ) {
-      console.log("Quiz and questions uploaded successfully", data);
+      // console.log("Quiz and questions uploaded successfully", data);
       router.push("/dashboard");
     } else {
       console.error("Error uploading quiz and questions", data.error);

@@ -20,8 +20,8 @@ export default async function signin(
       .eq("id", uuid)
       .single();
 
-    console.log("Signin API response data:", data); // Log the response data
-    console.log("Signin API error:", error); // Log any error
+    // console.log("Signin API response data:", data); // Log the response data
+    // console.log("Signin API error:", error); // Log any error
 
     if (error) {
       return res.status(500).json({ error: error.message });

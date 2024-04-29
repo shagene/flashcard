@@ -12,7 +12,7 @@ export default async function signup(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  console.log("Signup API called with body:", req.body); // Log the request body
+  // console.log("Signup API called with body:", req.body); // Log the request body
   if (req.method === "POST") {
     const { email } = req.body;
 
@@ -25,8 +25,8 @@ export default async function signup(
       .from("users")
       .insert([{ id: uuid, email }]);
 
-    console.log("Signup API response:", { uuid, email }); // Log the response data
-    console.log("Signup API error:", error); // Log any error
+    // console.log("Signup API response:", { uuid, email }); // Log the response data
+    // console.log("Signup API error:", error); // Log any error
 
     if (error) {
       return res.status(401).json({ error: error.message });

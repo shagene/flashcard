@@ -16,7 +16,7 @@ export default async function handler(
         .insert([{ title, user_id }])
         .single();
 
-      console.log("Insert response:", insertResponse); // Log the full response for debugging
+      // console.log("Insert response:", insertResponse); // Log the full response for debugging
 
       if (insertResponse.error) {
         console.error("Quiz insert error:", insertResponse.error);
@@ -38,7 +38,7 @@ export default async function handler(
       }
 
       const quizId = latestQuiz.id; // Use the fetched latest quiz ID
-      console.log("Latest quiz ID:", quizId);
+      // console.log("Latest quiz ID:", quizId);
 
       // Prepare questions for batch insert
       const questionsPrepared = questions.map(
