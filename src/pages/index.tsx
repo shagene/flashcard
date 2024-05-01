@@ -8,7 +8,7 @@ const LandingPage = () => {
     <Layout>
       <div className="flex flex-col items-center justify-center min-h-screen space-y-8">
         <h1 className="text-5xl font-bold text-gray-700">Quiz App</h1>
-        <p className="text-xl text-gray-600">
+        <p className="text-xl text-gray-600 text-center m-4">
           Welcome to the Quiz App! Create, manage, and study with custom
           quizzes.
         </p>
