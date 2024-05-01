@@ -83,6 +83,24 @@ const LandingPage = () => {
           </p>
         </section>
       </div>
+      <footer className="bg-gray-100 py-8">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-wrap justify-center space-x-8">
+            <Link
+              href="/privacy-policy"
+              className="text-gray-600 hover:text-gray-800"
+            >
+              Privacy Policy
+            </Link>
+            <Link href="/tos" className="text-gray-600 hover:text-gray-800">
+              Terms of Service
+            </Link>
+          </div>
+          <p className="mt-4 text-center text-gray-500">
+            &copy; {new Date().getFullYear()} Quiz App X. All rights reserved.
+          </p>
+        </div>
+      </footer>
     </Layout>
   );
 };
