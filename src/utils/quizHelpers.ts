@@ -5,8 +5,8 @@ export const initialQuestion = {
   incorrect_answers: ["", "", ""],
 };
 
-export const fetchQuizResults = async () => {
-  const response = await fetch("/api/quiz-results");
+export const fetchQuizResults = async (userId: string) => {
+  const response = await fetch(`/api/quiz-results?userId=${userId}`);
   if (!response.ok) {
     throw new Error("Failed to fetch quiz results");
   }

@@ -7,9 +7,16 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const { data, error } = await supabase.from("user_detail_report").select("*");
-  if (data) {
+  const { userId } = req.query;
+  if (!userId) {
+    return res.status(400).json({ error: "User ID is required" });
   }
+
+  // Use the user ID to filter the view data
+  const { data, error } = await supabase
+    .from("user_detail_report")
+    .select("*")
+    .eq("user_id", userId);
 
   if (error) {
     return res.status(400).json({ error: error.message });

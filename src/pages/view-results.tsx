@@ -31,13 +31,21 @@ const ViewResultsPage = () => {
   const [quizResults, setQuizResults] = useState<any[]>([]);
   const [selectedQuiz, setSelectedQuiz] = useState<string | null>(null);
 
+  const [userId, setUserId] = useState<string | null>(null);
+
   useEffect(() => {
-    fetchQuizResults()
-      .then((results) => {
-        setQuizResults(results);
-      })
-      .catch((error) => console.error("Error fetching quiz results:", error));
+    setUserId(localStorage.getItem("userUuid"));
   }, []);
+
+  useEffect(() => {
+    if (userId) {
+      fetchQuizResults(userId)
+        .then((results) => {
+          setQuizResults(results);
+        })
+        .catch((error) => console.error("Error fetching quiz results:", error));
+    }
+  }, [userId]);
 
   const uniqueQuizzes = Array.from(
     new Set(quizResults.map((result) => result.quizName)),
