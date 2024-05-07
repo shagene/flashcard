@@ -1,5 +1,5 @@
 // src/components/SigninForm.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 
 interface SigninFormProps {
@@ -10,15 +10,22 @@ const SigninForm: React.FC<SigninFormProps> = ({ setShowSignup }) => {
   const [uuid, setUuid] = useState("");
   const { loading, error, handleSignin } = useAuth();
 
+  useEffect(() => {
+    const storedUserId = localStorage.getItem("userId");
+    if (storedUserId) {
+      setUuid(storedUserId);
+    }
+  }, []);
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    handleSignin(uuid);
+    localStorage.setItem("userId", uuid);
+  };
+
   return (
     <>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSignin(uuid);
-        }}
-        className="mb-4"
-      >
+      <form onSubmit={handleSubmit} className="mb-4">
         <div className="mb-4">
           <label
             htmlFor="uuid"

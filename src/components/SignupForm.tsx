@@ -17,7 +17,6 @@ const SignupForm: React.FC<SignupFormProps> = ({ setShowSignup }) => {
     const uuid = await handleSignup(email);
     if (uuid) {
       alert(`Your UUID is: ${uuid}. You will be redirected to the dashboard.`);
-      // Optionally store the UUID in localStorage or context for later use
       localStorage.setItem("userUuid", uuid);
       router.push("/dashboard");
     }
@@ -25,7 +24,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ setShowSignup }) => {
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="mb-4">
         <div className="mb-4">
           <label
             htmlFor="email"
@@ -46,12 +45,12 @@ const SignupForm: React.FC<SignupFormProps> = ({ setShowSignup }) => {
         <button
           type="submit"
           disabled={loading}
-          className="text-lg w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
           {loading ? "Signing Up..." : "Sign Up"}
         </button>
       </form>
-      {error && <p className="text-red-500">{error}</p>}
+      {error && <p className="text-lg text-red-500">{error}</p>}
       <p className="text-lg text-center">
         Already have an ID?{" "}
         <button

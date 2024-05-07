@@ -8,6 +8,7 @@ const LandingPage = () => {
   return (
     <Layout>
       <div className="flex flex-col items-center justify-center py-16 space-y-8">
+        <Image src="/logo1.png" alt="Quiz App Logo" width={200} height={200} />
         <h1 className="text-5xl font-bold text-gray-700">Quiz App</h1>
         <p className="text-xl text-gray-600 text-center m-4">
           Welcome to the Quiz App! Create, manage, and study with custom
