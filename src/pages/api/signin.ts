@@ -6,7 +6,6 @@ export default async function signin(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  console.log("Signin API called with body:", req.body); // Log the request body
   if (req.method === "POST") {
     const { uuid } = req.body;
 
@@ -14,26 +13,30 @@ export default async function signin(
       return res.status(400).json({ error: "UUID is required" });
     }
 
-    const { data, error } = await supabase
-      .from("users")
-      .select("email")
-      .eq("id", uuid)
-      .single();
+    try {
+      const { data: user, error } = await supabase
+        .from("users")
+        .select("email, role")
+        .eq("id", uuid)
+        .single();
 
-    // console.log("Signin API response data:", data); // Log the response data
-    // console.log("Signin API error:", error); // Log any error
+      if (error) {
+        console.error("Error fetching user:", error);
+        return res.status(500).json({ error: "Failed to fetch user" });
+      }
 
-    if (error) {
-      return res.status(500).json({ error: error.message });
-    }
-
-    if (data) {
-      // Assuming you're sending the email back to the client
-      return res
-        .status(200)
-        .json({ message: "Sign in successful", email: data.email });
-    } else {
-      return res.status(404).json({ error: "User not found." });
+      if (user) {
+        return res.status(200).json({
+          message: "Sign in successful",
+          email: user.email,
+          role: user.role,
+        });
+      } else {
+        return res.status(404).json({ error: "User not found" });
+      }
+    } catch (error) {
+      console.error("Error signing in:", error);
+      return res.status(500).json({ error: "Failed to sign in" });
     }
   } else {
     res.setHeader("Allow", ["POST"]);

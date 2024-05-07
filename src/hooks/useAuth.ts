@@ -57,11 +57,18 @@ export const useAuth = (): UseAuthReturn => {
           body: JSON.stringify({ uuid }),
         });
         const data = await response.json();
+        console.log(data);
         if (data.email) {
           localStorage.setItem("userUuid", uuid);
           localStorage.setItem("userEmail", data.email);
           localStorage.setItem("isAuthenticated", "true");
-          router.push("/dashboard");
+
+          // Check the user's role and redirect accordingly
+          if (data.role === "admin") {
+            router.push("/adminDashboard");
+          } else {
+            router.push("/dashboard");
+          }
         } else {
           setError("Signin failed. Please try again.");
         }

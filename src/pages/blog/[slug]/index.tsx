@@ -1,22 +1,67 @@
-import { GetStaticPaths, GetStaticProps } from "next";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import Link from "next/link";
 import Layout from "../../../components/LayoutNonAuth";
 
-interface BlogPostProps {
-  post: {
-    slug: string;
-    title: string;
-    content: string;
-    date: string;
-  };
+interface BlogPost {
+  id: number;
+  title: string;
+  slug: string;
+  content: string;
+  created_at: string;
 }
 
-const BlogPost = ({ post }: BlogPostProps) => {
+const BlogPostPage = () => {
+  const router = useRouter();
+  const { slug } = router.query;
+  const [post, setPost] = useState<BlogPost | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      if (!slug) return;
+
+      try {
+        const response = await fetch(`/api/getBlogPostBySlug?slug=${slug}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch blog post, status: ${response.status}`,
+          );
+        }
+
+        const data = await response.json();
+        setPost(data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Failed to fetch blog post:", error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchPost();
+  }, [slug]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!post) {
+    return <div>Blog post not found.</div>;
+  }
+
   return (
     <Layout>
       <div className="flex flex-col items-center justify-center min-h-screen space-y-8">
         <h1 className="text-5xl font-bold text-gray-700">{post.title}</h1>
-        <p className="text-gray-500">{post.date}</p>
+        <p className="text-gray-500">
+          {new Date(post.created_at).toLocaleDateString()}
+        </p>
         <div className="prose">
           <p>{post.content}</p>
         </div>
@@ -30,37 +75,4 @@ const BlogPost = ({ post }: BlogPostProps) => {
   );
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  // Fetch the list of blog post slugs from your data source
-  const posts = [
-    { slug: "blog-post-1" },
-    { slug: "blog-post-2" },
-    { slug: "blog-post-3" },
-  ];
-
-  const paths = posts.map((post) => ({
-    params: { slug: post.slug },
-  }));
-
-  return { paths, fallback: false };
-};
-
-export const getStaticProps: GetStaticProps<BlogPostProps> = async ({
-  params,
-}) => {
-  // Fetch the blog post data based on the slug
-  const post = {
-    slug: params?.slug as string,
-    title: `Blog Post ${params?.slug}`,
-    content: `This is the content of blog post ${params?.slug}.`,
-    date: "2023-06-01",
-  };
-
-  return {
-    props: {
-      post,
-    },
-  };
-};
-
-export default BlogPost;
+export default BlogPostPage;

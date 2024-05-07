@@ -1,11 +1,50 @@
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Layout from "../../components/LayoutNonAuth";
 
+interface BlogPost {
+  id: number;
+  title: string;
+  slug: string;
+  content: string;
+  created_at: string;
+}
+
 const BlogPage = () => {
-  const blogPosts = [
-    { slug: "blog-post-1", title: "Getting Started", date: "2024-05-06" },
-    { slug: "blog-post-2", title: "Creating Quizzes", date: "2024-05-07" },
-  ];
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchBlogPosts = async () => {
+      try {
+        const response = await fetch("/api/getBlogPosts", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch blog posts, status: ${response.status}`,
+          );
+        }
+
+        const data = await response.json();
+        setBlogPosts(data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Failed to fetch blog posts:", error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchBlogPosts();
+  }, []);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Layout>
@@ -13,14 +52,16 @@ const BlogPage = () => {
         <h1 className="text-5xl font-bold text-gray-700">Blog</h1>
         <ul className="space-y-2">
           {blogPosts.map((post) => (
-            <li key={post.slug}>
+            <li key={post.id}>
               <Link
                 href={`/blog/${post.slug}`}
                 className="text-blue-500 hover:underline"
               >
                 {post.title}
               </Link>
-              <span className="text-gray-500 ml-2">{post.date}</span>
+              <span className="text-gray-500 ml-2">
+                {new Date(post.created_at).toLocaleDateString()}
+              </span>
             </li>
           ))}
         </ul>
