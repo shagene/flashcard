@@ -1,8 +1,7 @@
-// pages/quiz-detail/[quizId].tsx
-
 import LayoutAuth from "@/components/LayoutAuth";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import { formatTime } from "@/utils/formatTime";
 
 const QuizDetailPage = () => {
   const router = useRouter();
@@ -51,8 +50,8 @@ const QuizDetailPage = () => {
               <strong>Score:</strong> {quizDetails[0].score}
             </p>
             <p className="mt-2">
-              <strong>Time Taken:</strong> {quizDetails[0].time_taken.minutes}{" "}
-              minutes
+              <strong>Time Taken:</strong>{" "}
+              {formatTime(quizDetails[0].time_taken)}
             </p>
             <div className="mt-8">
               <h3 className="text-2xl font-bold">Questions:</h3>

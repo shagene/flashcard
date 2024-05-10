@@ -88,13 +88,12 @@ export const submitQuizAnswers = async (
       quiz_id: quizId,
       attempt_timestamp: new Date().toISOString(),
       score: score,
-      time_taken: timeTaken,
+      time_taken: timeTaken, // Ensure this is a string that represents the time taken in a consistent format
     });
 
     const { data: insertData, error: insertError } = insertResponse;
 
     if (insertError) {
-      // console.error("Error inserting quiz attempt:", insertError);
       return { error: insertError.message };
     }
 
@@ -108,7 +107,6 @@ export const submitQuizAnswers = async (
       .single();
 
     if (fetchError) {
-      // console.error("Error fetching attempt ID:", fetchError);
       return { error: "Failed to retrieve attempt ID after insertion." };
     }
 
@@ -118,8 +116,6 @@ export const submitQuizAnswers = async (
     }
 
     if (answers && answers.length > 0) {
-      // Insert quiz responses for provided answers
-
       for (const answer of answers) {
         const responsePayload = {
           attempt_id: attemptId,
@@ -134,6 +130,7 @@ export const submitQuizAnswers = async (
           is_correct: answer.isCorrect,
           created_at: new Date().toISOString(),
         };
+
         const { error: responseError } = await supabase
           .from("user_quiz_responses")
           .insert([responsePayload]);
@@ -143,17 +140,14 @@ export const submitQuizAnswers = async (
         }
       }
     } else {
-      // Fetch all questions for the quiz
       const { data: questions, error: questionsError } = await supabase
         .from("questions")
         .select("id")
         .eq("quiz_id", quizId);
 
       if (questionsError) {
-        // console.error("Failed to fetch questions:", questionsError);
         return { error: "failed to fetch questions" };
       }
-      // Insert default quiz responses for each question
       for (const question of questions) {
         const responsePayload = {
           attempt_id: attemptId,

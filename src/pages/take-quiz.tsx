@@ -58,7 +58,11 @@ const TakeQuizPage = () => {
       const isCorrect = answer.isCorrect;
       const updatedAnswers = [
         ...submittedAnswers,
-        { questionId: quiz.questions[currentQuestionIndex].id, isCorrect },
+        {
+          questionId: quiz.questions[currentQuestionIndex].id,
+          isCorrect,
+          selectedAnswer: answer.text,
+        },
       ];
 
       if (isCorrect) {
@@ -74,6 +78,12 @@ const TakeQuizPage = () => {
         setStopTime(new Date());
         const quizId = router.query.quizId;
         const timeTaken = timeElapsed; // Make sure timeElapsed is correctly updated before this line
+        console.log("Time taken: ", timeTaken);
+
+        const [minutes, seconds] = timeTaken.split(":").map(Number);
+        const timeTakenInterval = `${minutes} minutes ${seconds} seconds`;
+
+        console.log("Formatted Interval:", timeTakenInterval);
         fetch("/api/takeQuiz", {
           method: "POST",
           headers: {
@@ -81,13 +91,12 @@ const TakeQuizPage = () => {
           },
           body: JSON.stringify({
             quizId,
-            answers: updatedAnswers, // Use updatedAnswers to ensure the last answer is included
-            timeTaken: timeTaken.toString(),
+            answers: updatedAnswers,
+            timeTaken: timeTakenInterval,
             userId: userId,
           }),
         })
           .then((response) => response.json())
-          .then((data) => console.log(data))
           .catch((error) =>
             console.error("Error submitting quiz answers:", error),
           );

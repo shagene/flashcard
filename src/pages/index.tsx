@@ -1,12 +1,58 @@
 // src/pages/landing.tsx
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Layout from "../components/LayoutNonAuth";
 import Link from "next/link";
 import Image from "next/image";
 
 const LandingPage = () => {
+  const [showPopup, setShowPopup] = useState(false);
+
+  useEffect(() => {
+    const hasShownPopup = localStorage.getItem("hasShownPopup");
+    if (!hasShownPopup) {
+      setShowPopup(true);
+      localStorage.setItem("hasShownPopup", "true");
+    }
+  }, []);
+
+  const closePopup = () => {
+    setShowPopup(false);
+  };
+
   return (
     <Layout>
+      {showPopup && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className="bg-white p-8 rounded shadow-lg">
+            <h2 className="text-2xl font-bold mb-4">Important Notice</h2>
+            <div className="bg-gray-100 p-4 rounded mb-4">
+              <p className="mb-2">
+                This app is currently under active development and is subject to
+                regular changes. Please be aware that bugs may occur during this
+                phase.
+              </p>
+              <p className="font-bold">
+                What should you keep in mind while using this app?
+              </p>
+              <div className="ml-4">
+                <label className="flex items-center">
+                  <input type="radio" className="form-radio" checked readOnly />
+                  <span className="ml-2">
+                    Bugs may occur during the active development phase
+                  </span>
+                </label>
+              </div>
+            </div>
+            <button
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              onClick={closePopup}
+            >
+              Got it!
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="flex flex-col items-center justify-center py-16 space-y-8">
         <Image src="/logo1.png" alt="Quiz App Logo" width={200} height={200} />
         <h1 className="text-5xl font-bold text-gray-700">Quiz App</h1>
