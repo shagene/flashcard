@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 
-// Defines the structure of the Quiz object
 interface Quiz {
   user_id: string;
   quiz_id: string;
@@ -13,49 +13,43 @@ interface Quiz {
 }
 
 const QuizOverview: React.FC = () => {
-  // State variables to store fetched quizzes, sort configuration, and loading state
-  const [fetchedQuizzes, setFetchedQuizzes] = useState<Quiz[]>([]);
-  const [sortConfig, setSortConfig] = useState<{
+  const [sortConfig, setSortConfig] = React.useState<{
     key: keyof Quiz | null;
     direction: "ascending" | "descending" | null;
   }>({ key: null, direction: null });
-  const [isLoading, setIsLoading] = useState(true);
 
   const router = useRouter();
 
+  const fetchQuizzes = async (): Promise<Quiz[]> => {
+    const userId = localStorage.getItem("userUuid");
+    if (!userId) throw new Error("User ID not found");
+    const response = await fetch(`/api/getQuizOverview?userId=${userId}`);
+    if (!response.ok) throw new Error("Network response was not ok");
+    const data = await response.json();
+    return data.quizzes; // Ensure this line correctly extracts the quizzes array
+  };
+
+  const {
+    data: quizzes,
+    isLoading,
+    isError,
+    error,
+  } = useQuery<Quiz[], Error>({
+    queryKey: ["quizzes"],
+    queryFn: fetchQuizzes,
+  }) as {
+    data: Quiz[];
+    isLoading: boolean;
+    isError: boolean;
+    error: Error | null;
+  };
+
   useEffect(() => {
-    // Fetches quiz overview data from the API when the component mounts
-    const fetchQuizOverview = async () => {
-      const userId = localStorage.getItem("userUuid");
-      if (!userId) return;
-
-      try {
-        const response = await fetch(`/api/getQuizOverview?userId=${userId}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(
-            `Failed to fetch quiz overview, status: ${response.status}`,
-          );
-        }
-
-        const data = await response.json();
-        setFetchedQuizzes(data.quizzes);
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Failed to fetch quiz overview:", error);
-        setIsLoading(false);
-      }
-    };
-
-    fetchQuizOverview();
+    if (!sortConfig.key || !sortConfig.direction) {
+      setSortConfig({ key: "quiz_name", direction: "ascending" });
+    }
   }, []);
 
-  // Function to handle sorting request based on the clicked column
   const requestSort = (key: keyof Quiz) => {
     let direction: "ascending" | "descending" = "ascending";
     if (
@@ -68,112 +62,111 @@ const QuizOverview: React.FC = () => {
     setSortConfig({ key, direction });
   };
 
-  // Memoized value to store sorted quizzes based on the current sort configuration
   const sortedQuizzes = React.useMemo(() => {
-    let sortableItems = [...fetchedQuizzes];
-    if (sortConfig.key !== null) {
+    if (!Array.isArray(quizzes)) return [];
+
+    let sortableItems = [...quizzes];
+    if (sortConfig.key && sortConfig.direction) {
       sortableItems.sort((a, b) => {
-        if (a[sortConfig.key!]! > b[sortConfig.key!]!) {
-          return sortConfig.direction === "ascending" ? -1 : 1;
-        }
-        if (a[sortConfig.key!]! < b[sortConfig.key!]!) {
-          return sortConfig.direction === "ascending" ? 1 : -1;
-        }
-        return 0;
+        if (sortConfig.key === null) return 0;
+        const valueA = String(a[sortConfig.key] ?? "");
+        const valueB = String(b[sortConfig.key] ?? "");
+        return sortConfig.direction === "ascending"
+          ? valueA.localeCompare(valueB)
+          : valueB.localeCompare(valueA);
       });
     }
     return sortableItems;
-  }, [fetchedQuizzes, sortConfig]);
+  }, [quizzes, sortConfig]);
 
-  // Renders a loading message while the data is being fetched
-  if (isLoading) {
+  if (isLoading) return <div>Loading...</div>;
+  if (isError)
     return (
-      <div className="flex justify-center items-center">
-        <div>Loading...</div>
+      <div>
+        Error: {error instanceof Error ? error.message : "Unknown error"}
       </div>
     );
+
+  if (!quizzes || quizzes.length === 0) {
+    return <div>No quizzes to display</div>;
   }
 
-  // Renders the quiz overview table with sortable columns and quiz data
   return (
     <div>
-      {fetchedQuizzes.length > 0 ? (
-        <div>
-          <table className="w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th
-                  className="px-6 py-3 text-center text-lg font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                  onClick={() => requestSort("quiz_name")}
-                >
-                  Name
-                </th>
-                <th
-                  className="px-6 py-3 text-center text-lg font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                  onClick={() => requestSort("num_questions")}
-                >
-                  Questions
-                </th>
-                <th
-                  className="px-6 py-3 text-center text-lg font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                  onClick={() => requestSort("attempts_taken")}
-                >
-                  Attempts
-                </th>
-                <th
-                  className="px-6 py-3 text-center text-lg font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                  onClick={() => requestSort("last_attempt_time")}
-                >
-                  Last Attempt
-                </th>
-                <th
-                  className="px-6 py-3 text-center text-lg font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                  onClick={() => requestSort("last_score")}
-                >
-                  Last Score
-                </th>
+      {quizzes && quizzes.length > 0 ? (
+        <table className="w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th
+                className="px-6 py-3 text-center text-lg font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                onClick={() => requestSort("quiz_name")}
+              >
+                Name
+              </th>
+              <th
+                className="px-6 py-3 text-center text-lg font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                onClick={() => requestSort("num_questions")}
+              >
+                Questions
+              </th>
+              <th
+                className="px-6 py-3 text-center text-lg font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                onClick={() => requestSort("attempts_taken")}
+              >
+                Attempts
+              </th>
+              <th
+                className="px-6 py-3 text-center text-lg font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                onClick={() => requestSort("last_attempt_time")}
+              >
+                Last Attempt
+              </th>
+              <th
+                className="px-6 py-3 text-center text-lg font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                onClick={() => requestSort("last_score")}
+              >
+                Last Score
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {sortedQuizzes.map((quiz) => (
+              <tr
+                key={quiz.quiz_id}
+                onClick={() =>
+                  router.push(
+                    `/take-quiz?quizId=${quiz.quiz_id}&quizName=${encodeURIComponent(quiz.quiz_name)}`,
+                  )
+                }
+              >
+                <td className="px-6 py-4 text-center text-lg whitespace-nowrap">
+                  {quiz.quiz_name}
+                </td>
+                <td className="px-6 py-4 text-center text-lg whitespace-nowrap">
+                  {quiz.num_questions}
+                </td>
+                <td className="px-6 py-4 text-center text-lg whitespace-nowrap">
+                  {quiz.attempts_taken}
+                </td>
+                <td className="px-6 py-4 text-center text-lg whitespace-nowrap">
+                  {quiz.last_attempt_time
+                    ? new Date(quiz.last_attempt_time).toLocaleDateString(
+                        "en-US",
+                        {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        },
+                      )
+                    : "N/A"}
+                </td>
+                <td className="px-6 py-4 text-center text-lg whitespace-nowrap">
+                  {quiz.last_score !== null ? quiz.last_score : "N/A"}
+                </td>
               </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {sortedQuizzes.map((quiz) => (
-                <tr
-                  key={quiz.quiz_id}
-                  onClick={() =>
-                    router.push(
-                      `/take-quiz?quizId=${quiz.quiz_id}&quizName=${encodeURIComponent(quiz.quiz_name)}`,
-                    )
-                  }
-                  style={{ cursor: "pointer" }}
-                >
-                  <td className="px-6 py-4 text-center text-lg whitespace-nowrap">
-                    {quiz.quiz_name}
-                  </td>
-                  <td className="px-6 py-4 text-center text-lg whitespace-nowrap">
-                    {quiz.num_questions}
-                  </td>
-                  <td className="px-6 py-4 text-center text-lg whitespace-nowrap">
-                    {quiz.attempts_taken}
-                  </td>
-                  <td className="px-6 py-4 text-center text-lg whitespace-nowrap">
-                    {quiz.last_attempt_time
-                      ? new Date(quiz.last_attempt_time).toLocaleDateString(
-                          "en-US",
-                          {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          },
-                        )
-                      : "N/A"}
-                  </td>
-                  <td className="px-6 py-4 text-center text-lg whitespace-nowrap">
-                    {quiz.last_score !== null ? quiz.last_score : "N/A"}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       ) : (
         <p className="text-lg">No quizzes available.</p>
       )}
