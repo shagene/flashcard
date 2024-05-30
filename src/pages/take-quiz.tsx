@@ -2,23 +2,31 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import LayoutAuth from "../components/LayoutAuth";
 import { useAuth } from "@/hooks/useAuth";
-import { fetchQuizDetails } from "./api/takeQuiz";
+import { useQuery } from "@tanstack/react-query";
 import useTimer from "@/hooks/useTimer";
 import QuizStart from "@/components/QuizStart";
 import QuizQuestion from "@/components/QuizQuestion";
 import QuizFinish from "@/components/QuizFinish";
 
+const fetchQuizDetails = async (quizId: string) => {
+  console.log("Fetching quiz details for quizId:", quizId);
+  const response = await fetch(`/api/takeQuiz?quizId=${quizId}`);
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
+  }
+  const data = await response.json();
+  return {
+    ...data,
+    questions: data.quizDetails,
+  };
+};
+
 const TakeQuizPage = () => {
   useAuth();
   const router = useRouter();
+  const { quizId, quizName } = router.query;
 
   const [userId, setUserId] = useState<string | null>(null);
-
-  useEffect(() => {
-    setUserId(localStorage.getItem("userUuid"));
-  }, []);
-  const { quizId, quizName } = router.query;
-  const [quiz, setQuiz] = useState<{ questions: any[] } | null>(null);
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [stopTime, setStopTime] = useState<Date | null>(null);
   const timeElapsed = useTimer(startTime, stopTime);
@@ -30,24 +38,25 @@ const TakeQuizPage = () => {
   const [quizFinished, setQuizFinished] = useState(false);
 
   useEffect(() => {
-    if (quizId) {
-      fetchQuizDetails(quizId).then((quizData) => {
-        if (!quizData) return;
-        const questions = quizData
-          .map((q) => ({
-            ...q,
-            answers: [
-              { text: q.correct_answer, isCorrect: true },
-              { text: q.incorrect_answer1, isCorrect: false },
-              { text: q.incorrect_answer2, isCorrect: false },
-              { text: q.incorrect_answer3, isCorrect: false },
-            ].sort(() => Math.random() - 0.5),
-          }))
-          .sort(() => Math.random() - 0.5);
-        setQuiz({ questions });
-      });
-    }
-  }, [quizId]);
+    setUserId(localStorage.getItem("userUuid"));
+  }, []);
+
+  const {
+    data: quiz,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["quizDetails", quizId],
+    queryFn: () => fetchQuizDetails(quizId as string),
+    enabled: !!quizId,
+  });
+
+  useEffect(() => {
+    console.log("quizId:", quizId);
+    console.log("quiz:", quiz);
+    console.log("isLoading:", isLoading);
+    console.log("error:", error);
+  }, [quizId, quiz, isLoading, error]);
 
   const startQuiz = () => {
     setStartTime(new Date());
@@ -108,10 +117,18 @@ const TakeQuizPage = () => {
     router.push("/dashboard");
   };
 
-  if (!quiz || quiz.questions.length === 0) {
+  if (isLoading) {
     return (
       <LayoutAuth>
         <div>Loading quiz...</div>
+      </LayoutAuth>
+    );
+  }
+
+  if (error) {
+    return (
+      <LayoutAuth>
+        <div>Error loading quiz: {error.message}</div>
       </LayoutAuth>
     );
   }
@@ -121,7 +138,9 @@ const TakeQuizPage = () => {
     const missedQuestions = submittedAnswers
       .filter((answer) => !answer.isCorrect)
       .map((answer) => {
-        const question = quiz.questions.find((q) => q.id === answer.questionId);
+        const question = quiz.questions.find(
+          (q: { id: string }) => q.id === answer.questionId,
+        );
         const userAnswer = question.answers.find(
           (a: { isCorrect: boolean; text: string }) =>
             a.isCorrect === answer.isCorrect,
@@ -152,21 +171,25 @@ const TakeQuizPage = () => {
 
   return (
     <LayoutAuth>
-      {!startTime ? (
-        <QuizStart
-          quizName={quizName}
-          totalQuestions={quiz.questions.length}
-          onStartQuiz={startQuiz}
-        />
+      {quiz && quiz.questions ? (
+        !startTime ? (
+          <QuizStart
+            quizName={quizName}
+            totalQuestions={quiz.questions.length}
+            onStartQuiz={startQuiz}
+          />
+        ) : (
+          <QuizQuestion
+            question={quiz.questions[currentQuestionIndex].question}
+            answers={quiz.questions[currentQuestionIndex].answers}
+            onAnswerSubmit={submitAnswer}
+            timeElapsed={timeElapsed}
+            currentQuestionIndex={currentQuestionIndex}
+            totalQuestions={quiz.questions.length}
+          />
+        )
       ) : (
-        <QuizQuestion
-          question={quiz.questions[currentQuestionIndex].question}
-          answers={quiz.questions[currentQuestionIndex].answers}
-          onAnswerSubmit={submitAnswer}
-          timeElapsed={timeElapsed}
-          currentQuestionIndex={currentQuestionIndex}
-          totalQuestions={quiz.questions.length}
-        />
+        <div>Loading quiz details...</div>
       )}
     </LayoutAuth>
   );

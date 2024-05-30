@@ -1,7 +1,7 @@
 // src/components/LayoutAuth.tsx
 import React, { ReactNode, useState, useEffect } from "react";
 import Head from "next/head";
-import { useRouter } from "next/router"; // Import useRouter
+import { useRouter } from "next/router";
 import { Inter } from "next/font/google";
 import "../styles/globals.css";
 import Link from "next/link";
@@ -16,46 +16,44 @@ type Props = {
 const LayoutAuth = ({ children }: Props) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
   const [userEmail, setUserEmail] = useState("");
-  const router = useRouter(); // Use the useRouter hook
+  const router = useRouter();
   const isDashboard = router.pathname === "/dashboard";
 
   useEffect(() => {
-    const updateUserEmail = () => {
-      const email = localStorage.getItem("userEmail");
-      if (email) {
-        setUserEmail(email);
+    const fetchUserEmail = async () => {
+      try {
+        const response = await fetch("/api/user");
+        if (response.ok) {
+          const data = await response.json();
+          setUserEmail(data.email);
+        } else {
+          setUserEmail("");
+        }
+      } catch (error) {
+        console.error("Error fetching user email:", error);
+        setUserEmail("");
       }
     };
 
-    updateUserEmail(); // Call the function initially
-
-    const handleRouteChange = () => {
-      updateUserEmail();
-    };
-
-    router.events.on("routeChangeComplete", handleRouteChange);
-
-    // Add event listener for tab or browser close
-    window.addEventListener("beforeunload", handleLogout);
-
-    // Cleanup function to remove event listeners
-    return () => {
-      router.events.off("routeChangeComplete", handleRouteChange);
-      window.removeEventListener("beforeunload", handleLogout);
-    };
+    fetchUserEmail();
   }, []);
 
-  const handleLogout = () => {
-    // Clear user data from localStorage
-    localStorage.removeItem("userEmail");
-    localStorage.removeItem("isAuthenticated"); // Make sure to remove the isAuthenticated flag
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("/api/signout", {
+        method: "POST",
+      });
 
-    // Redirect to the home page or sign-in page
-    router.push("/"); // Adjust the path as needed
-
-    setLoading(false);
+      if (response.ok) {
+        setUserEmail("");
+        router.push("/");
+      } else {
+        console.error("Error logging out:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
   };
 
   return (
@@ -71,13 +69,19 @@ const LayoutAuth = ({ children }: Props) => {
           <div className="title text-lg">Quiz App</div>
 
           <div className="user-info text-lg">
-            {userEmail ? <span>{userEmail}</span> : <span>No email found</span>}
-            <button
-              onClick={handleLogout}
-              className="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 logout-button"
-            >
-              Log Out
-            </button>
+            {userEmail ? (
+              <>
+                <span>{userEmail}</span>
+                <button
+                  onClick={handleLogout}
+                  className="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 logout-button"
+                >
+                  Log Out
+                </button>
+              </>
+            ) : (
+              <span>No user logged in</span>
+            )}
           </div>
         </div>
         <div className="link-wrapper">

@@ -133,6 +133,7 @@ const QuizOverview: React.FC = () => {
             {sortedQuizzes.map((quiz) => (
               <tr
                 key={quiz.quiz_id}
+                className="tracking-wider cursor-pointer"
                 onClick={() =>
                   router.push(
                     `/take-quiz?quizId=${quiz.quiz_id}&quizName=${encodeURIComponent(quiz.quiz_name)}`,

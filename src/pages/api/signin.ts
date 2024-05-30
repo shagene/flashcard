@@ -1,6 +1,7 @@
 // src/pages/api/signin.ts
 import { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "../../utils/supabaseClient";
+import { setCookie } from "@/utils/cookies";
 
 export default async function signin(
   req: NextApiRequest,
@@ -26,8 +27,17 @@ export default async function signin(
       }
 
       if (user) {
+        setCookie(res, "userId", uuid, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          maxAge: 30 * 24 * 60 * 60, // 30 days
+          path: "/",
+          sameSite: "lax", // Add SameSite attribute
+        });
+
         return res.status(200).json({
           message: "Sign in successful",
+          uuid,
           email: user.email,
           role: user.role,
         });

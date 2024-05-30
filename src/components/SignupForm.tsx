@@ -1,25 +1,74 @@
 // src/components/SignupForm.tsx
-import React, { useState } from "react";
-import { useAuth } from "../hooks/useAuth";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface SignupFormProps {
   setShowSignup: (show: boolean) => void;
 }
 
+interface User {
+  uuid: string;
+  email: string;
+}
+
 const SignupForm: React.FC<SignupFormProps> = ({ setShowSignup }) => {
   const [email, setEmail] = useState("");
-  const { loading, error, handleSignup } = useAuth();
+  const [error, setError] = useState("");
+  const [users, setUsers] = useState<User[]>([]);
   const router = useRouter();
+  const queryClient = useQueryClient();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const uuid = await handleSignup(email);
-    if (uuid) {
-      alert(`Your UUID is: ${uuid}. You will be redirected to the dashboard.`);
-      localStorage.setItem("userUuid", uuid);
+  useEffect(() => {
+    const storedUsers = JSON.parse(localStorage.getItem("users") || "[]");
+    setUsers(storedUsers);
+  }, []);
+
+  const signupMutation = useMutation({
+    mutationFn: async (email: string) => {
+      const response = await fetch("/api/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error);
+      }
+
+      return response.json();
+    },
+    onSuccess: (data) => {
+      const { uuid, email } = data;
+
+      // Save the last signed-up user
+      localStorage.setItem("lastSignedInUser", uuid);
+
+      // Update the list of users
+      const updatedUsers = [
+        { uuid, email },
+        ...users.filter((user) => user.uuid !== uuid),
+      ];
+      localStorage.setItem("users", JSON.stringify(updatedUsers));
+      setUsers(updatedUsers);
+
+      // Alert the user with their UUID
+      alert(`Your UUID is: ${uuid}`);
+
       router.push("/dashboard");
-    }
+    },
+    onError: (error: any) => {
+      setError(error.message);
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError("");
+    signupMutation.mutate(email);
   };
 
   return (
@@ -44,10 +93,10 @@ const SignupForm: React.FC<SignupFormProps> = ({ setShowSignup }) => {
         </div>
         <button
           type="submit"
-          disabled={loading}
+          disabled={signupMutation.status === "pending"}
           className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
-          {loading ? "Signing Up..." : "Sign Up"}
+          {signupMutation.status === "pending" ? "Signing Up..." : "Sign Up"}
         </button>
       </form>
       {error && <p className="text-lg text-red-500">{error}</p>}

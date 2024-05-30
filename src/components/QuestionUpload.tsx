@@ -1,7 +1,7 @@
-import { useState } from "react";
-import Papa, { ParseConfig } from "papaparse";
+import { useMutation } from "@tanstack/react-query";
 import { Question } from "@/types/Question";
-import { ParseResult } from "papaparse";
+import { useState } from "react";
+import Papa, { ParseResult } from "papaparse";
 
 const QuestionUpload = ({
   onQuestionsUploaded,
@@ -40,9 +40,9 @@ const QuestionUpload = ({
     } as Papa.ParseConfig);
   };
 
-  const handleParsedData = (results: Papa.ParseResult<any>) => {
+  const handleParsedData = (results: ParseResult<any>) => {
     const questions = results.data
-      .filter((q) => q.question && q.correct_answer) // Filter out rows without question or correct_answer
+      .filter((q) => q.question && q.correct_answer)
       .map((q) => ({
         question: q.question.trim(),
         correct_answer: q.correct_answer.trim(),
@@ -50,7 +50,7 @@ const QuestionUpload = ({
           q.incorrect_answer1?.trim(),
           q.incorrect_answer2?.trim(),
           q.incorrect_answer3?.trim(),
-        ].filter(Boolean), // This removes any undefined, null, or empty strings
+        ].filter(Boolean),
       }));
 
     const isValid = questions.every(
@@ -59,9 +59,7 @@ const QuestionUpload = ({
     );
 
     if (isValid) {
-      onQuestionsUploaded(questions);
-      setError("");
-      closeModal();
+      uploadQuestionsMutation.mutate(questions);
     } else {
       setError(
         "Invalid CSV format. Please make sure the CSV has columns for question, correct_answer, and 3 incorrect_answers.",
@@ -72,6 +70,33 @@ const QuestionUpload = ({
   const handleError = (err: Papa.ParseError) => {
     setError("Error parsing CSV: " + err.message);
   };
+
+  const uploadQuestionsMutation = useMutation({
+    mutationFn: async (questions: Question[]) => {
+      const response = await fetch("/api/uploadQuestions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ questions }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error);
+      }
+
+      return response.json();
+    },
+    onSuccess: (data) => {
+      onQuestionsUploaded(data);
+      setError("");
+      closeModal();
+    },
+    onError: (error: any) => {
+      setError(error.message);
+    },
+  });
 
   return (
     <div>
