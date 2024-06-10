@@ -46,6 +46,8 @@ const SignupForm: React.FC<SignupFormProps> = ({ setShowSignup }) => {
 
       // Save the last signed-up user
       localStorage.setItem("lastSignedInUser", uuid);
+      localStorage.setItem("userUuid", uuid); // Ensure userUuid is set
+      console.log("User ID set in localStorage:", uuid); // Debugging log
 
       // Update the list of users
       const updatedUsers = [

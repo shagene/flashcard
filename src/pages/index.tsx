@@ -1,4 +1,4 @@
-// src/pages/landing.tsx
+// src/pages/index.tsx
 import React, { useState, useEffect } from "react";
 import Layout from "../components/LayoutNonAuth";
 import Link from "next/link";

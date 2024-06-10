@@ -22,10 +22,21 @@ const QuizOverview: React.FC = () => {
 
   const fetchQuizzes = async (): Promise<Quiz[]> => {
     const userId = localStorage.getItem("userUuid");
-    if (!userId) throw new Error("User ID not found");
+    console.log("Retrieved User ID:", userId); // Debugging log
+
+    if (!userId) {
+      console.error("User ID not found in localStorage");
+      throw new Error("User ID not found");
+    }
+
     const response = await fetch(`/api/getQuizOverview?userId=${userId}`);
-    if (!response.ok) throw new Error("Network response was not ok");
+    if (!response.ok) {
+      console.error("Network response was not ok", response.statusText);
+      throw new Error("Network response was not ok");
+    }
+
     const data = await response.json();
+    console.log("Fetched quizzes data:", data); // Debugging log
     return data.quizzes; // Ensure this line correctly extracts the quizzes array
   };
 

@@ -30,6 +30,8 @@ export const useAuth = (): UseAuthReturn => {
         if (data.email) {
           localStorage.setItem("userEmail", data.email);
           localStorage.setItem("isAuthenticated", "true");
+          localStorage.setItem("userUuid", data.uuid); // Ensure userUuid is set
+          console.log("User ID set in localStorage:", data.uuid); // Debugging log
           setLoading(false);
           return data.uuid; // Return the UUID
         } else {
@@ -62,6 +64,7 @@ export const useAuth = (): UseAuthReturn => {
           localStorage.setItem("userUuid", uuid);
           localStorage.setItem("userEmail", data.email);
           localStorage.setItem("isAuthenticated", "true");
+          console.log("User ID set in localStorage:", uuid); // Debugging log
 
           // Check the user's role and redirect accordingly
           if (data.role === "admin") {
