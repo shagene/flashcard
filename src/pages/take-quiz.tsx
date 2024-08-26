@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/router";
 import LayoutAuth from "../components/LayoutAuth";
 import { useAuth } from "@/hooks/useAuth";
@@ -21,6 +21,17 @@ const fetchQuizDetails = async (quizId: string) => {
   };
 };
 
+// Move formatAnswers outside the component
+const formatAnswers = (question: any) => {
+  if (!question) return [];
+  return [
+    { text: question.correct_answer, isCorrect: true },
+    { text: question.incorrect_answer1, isCorrect: false },
+    { text: question.incorrect_answer2, isCorrect: false },
+    { text: question.incorrect_answer3, isCorrect: false },
+  ].sort(() => 0.5 - Math.random());
+};
+
 const TakeQuizPage = () => {
   useAuth();
   const router = useRouter();
@@ -33,13 +44,9 @@ const TakeQuizPage = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [submittedAnswers, setSubmittedAnswers] = useState<
-    Array<{ questionId: any; isCorrect: boolean }>
+    Array<{ questionId: string; isCorrect: boolean; selectedAnswer: string }>
   >([]);
   const [quizFinished, setQuizFinished] = useState(false);
-
-  useEffect(() => {
-    setUserId(localStorage.getItem("userUuid"));
-  }, []);
 
   const {
     data: quiz,
@@ -50,6 +57,17 @@ const TakeQuizPage = () => {
     queryFn: () => fetchQuizDetails(quizId as string),
     enabled: !!quizId,
   });
+
+  const formattedAnswers = useMemo(() => {
+    if (quiz && quiz.questions && quiz.questions[currentQuestionIndex]) {
+      return formatAnswers(quiz.questions[currentQuestionIndex]);
+    }
+    return [];
+  }, [quiz, currentQuestionIndex]);
+
+  useEffect(() => {
+    setUserId(localStorage.getItem("userUuid"));
+  }, []);
 
   useEffect(() => {
     console.log("quizId:", quizId);
@@ -63,6 +81,7 @@ const TakeQuizPage = () => {
   };
 
   const submitAnswer = async (answer: any): Promise<void> => {
+    console.log("submitAnswer called with:", answer);
     if (quiz && currentQuestionIndex < quiz.questions.length) {
       const isCorrect = answer.isCorrect;
       const updatedAnswers = [
@@ -86,7 +105,7 @@ const TakeQuizPage = () => {
         setQuizFinished(true);
         setStopTime(new Date());
         const quizId = router.query.quizId;
-        const timeTaken = timeElapsed; // Make sure timeElapsed is correctly updated before this line
+        const timeTaken = timeElapsed;
         console.log("Time taken: ", timeTaken);
 
         const [minutes, seconds] = timeTaken.split(":").map(Number);
@@ -139,19 +158,12 @@ const TakeQuizPage = () => {
       .filter((answer) => !answer.isCorrect)
       .map((answer) => {
         const question = quiz.questions.find(
-          (q: { id: string }) => q.id === answer.questionId,
+          (q: { id: string }) => q.id === answer.questionId
         );
-        const userAnswer = question.answers.find(
-          (a: { isCorrect: boolean; text: string }) =>
-            a.isCorrect === answer.isCorrect,
-        ).text;
-        const correctAnswer = question.answers.find(
-          (a: { isCorrect: boolean; text: string }) => a.isCorrect,
-        ).text;
         return {
           question: question.question,
-          userAnswer,
-          correctAnswer,
+          userAnswer: answer.selectedAnswer,
+          correctAnswer: question.correct_answer,
         };
       });
 
@@ -169,6 +181,10 @@ const TakeQuizPage = () => {
     );
   }
 
+  console.log("Current quiz state:", quiz);
+  console.log("Current question index:", currentQuestionIndex);
+  console.log("Current question:", quiz?.questions?.[currentQuestionIndex]);
+
   return (
     <LayoutAuth>
       {quiz && quiz.questions ? (
@@ -181,7 +197,7 @@ const TakeQuizPage = () => {
         ) : (
           <QuizQuestion
             question={quiz.questions[currentQuestionIndex].question}
-            answers={quiz.questions[currentQuestionIndex].answers}
+            answers={formattedAnswers}
             onAnswerSubmit={submitAnswer}
             timeElapsed={timeElapsed}
             currentQuestionIndex={currentQuestionIndex}

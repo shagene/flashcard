@@ -75,13 +75,13 @@ export const submitQuizAnswers = async (
   userId: string,
 ) => {
   try {
-    let totalQuestions = answers?.length ?? 0;
-    let correctAnswers =
-      answers?.filter((answer) => answer.isCorrect).length ?? 0;
-    let score =
-      totalQuestions > 0
-        ? Math.round((correctAnswers / totalQuestions) * 100)
-        : 0;
+    // Initialize answers as an empty array if it's undefined
+    const safeAnswers = answers || [];
+    let totalQuestions = safeAnswers.length;
+    let correctAnswers = safeAnswers.filter((answer) => answer.isCorrect).length;
+    let score = totalQuestions > 0
+      ? Math.round((correctAnswers / totalQuestions) * 100)
+      : 0;
 
     const insertResponse = await supabase.from("user_quiz_attempts").insert({
       user_id: userId,
@@ -115,8 +115,8 @@ export const submitQuizAnswers = async (
       return { error: "Failed to retrieve attempt ID after insertion." };
     }
 
-    if (answers && answers.length > 0) {
-      for (const answer of answers) {
+    if (safeAnswers.length > 0) {
+      for (const answer of safeAnswers) {
         const responsePayload = {
           attempt_id: attemptId,
           user_id: userId,

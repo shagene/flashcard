@@ -1,4 +1,3 @@
-// src/components/QuizQuestion.tsx
 import React from "react";
 
 interface Answer {
@@ -8,7 +7,7 @@ interface Answer {
 
 interface QuizQuestionProps {
   question: string;
-  answers: Answer[];
+  answers: Answer[]; // Remove the optional flag
   onAnswerSubmit: (answer: Answer) => void;
   timeElapsed: string;
   currentQuestionIndex: number;
