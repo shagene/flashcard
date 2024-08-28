@@ -69,8 +69,8 @@ const CreateQuizPage = () => {
 
   return (
     <Layout>
-      <div className="text-center">
-        <h1 className="text-5xl font-bold">Create Quiz</h1>
+      <div className="text-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 className="text-4xl sm:text-5xl font-bold">Create Quiz</h1>
         <p className="text-lg text-gray-500 mt-4">
           Click{" "}
           <a href="/ai-chat" className="text-blue-500 hover:underline">
@@ -78,9 +78,9 @@ const CreateQuizPage = () => {
           </a>{" "}
           to chat with AI to create your quiz.
         </p>
-        <form onSubmit={handleSubmit} className="space-y-4 mx-4 mb-4">
+        <form onSubmit={handleSubmit} className="space-y-4 mb-4">
           <div>
-            <label htmlFor="quizName" className="block mt-4 mb-2 text-3xl">
+            <label htmlFor="quizName" className="block mt-4 mb-2 text-2xl sm:text-3xl">
               Quiz Name:
             </label>
             <input
@@ -88,7 +88,7 @@ const CreateQuizPage = () => {
               id="quizName"
               value={quizName}
               onChange={(e) => setQuizName(e.target.value)}
-              className="border border-gray-300 px-2 py-1 rounded"
+              className="border border-gray-300 px-2 py-1 rounded w-full max-w-md"
               required
               minLength={3}
               maxLength={50}

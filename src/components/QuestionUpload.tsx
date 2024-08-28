@@ -59,7 +59,9 @@ const QuestionUpload = ({
     );
 
     if (isValid) {
-      uploadQuestionsMutation.mutate(questions);
+      onQuestionsUploaded(questions);
+      setError("");
+      closeModal();
     } else {
       setError(
         "Invalid CSV format. Please make sure the CSV has columns for question, correct_answer, and 3 incorrect_answers.",
@@ -70,33 +72,6 @@ const QuestionUpload = ({
   const handleError = (err: Papa.ParseError) => {
     setError("Error parsing CSV: " + err.message);
   };
-
-  const uploadQuestionsMutation = useMutation({
-    mutationFn: async (questions: Question[]) => {
-      const response = await fetch("/api/uploadQuestions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ questions }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error);
-      }
-
-      return response.json();
-    },
-    onSuccess: (data) => {
-      onQuestionsUploaded(data);
-      setError("");
-      closeModal();
-    },
-    onError: (error: any) => {
-      setError(error.message);
-    },
-  });
 
   return (
     <div>

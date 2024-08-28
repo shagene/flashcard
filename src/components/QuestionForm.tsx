@@ -23,19 +23,19 @@ const QuestionForm = ({
 }: QuestionFormProps) => (
   <div className="mt-8 overflow-x-auto">
     <div className="flex flex-col w-full">
-      <div className="bg-gray-50 text-lg grid grid-cols-6 gap-4 p-4 min-w-max">
-        <span>Question</span>
-        <span>Correct Answer</span>
-        <span>Incorrect Answer 1</span>
-        <span>Incorrect Answer 2</span>
-        <span>Incorrect Answer 3</span>
-        <span>Actions</span>
+      <div className="bg-gray-50 text-lg grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 p-4">
+        <span className="font-semibold">Question</span>
+        <span className="font-semibold">Correct Answer</span>
+        <span className="font-semibold hidden lg:block">Incorrect Answer 1</span>
+        <span className="font-semibold hidden lg:block">Incorrect Answer 2</span>
+        <span className="font-semibold hidden lg:block">Incorrect Answer 3</span>
+        <span className="font-semibold">Actions</span>
       </div>
       <div className="bg-white">
         {quizQuestions.map((q, index) => (
           <div
             key={index}
-            className="mb-4 grid grid-cols-6 gap-4 p-4 min-w-max"
+            className="mb-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-6 p-4"
           >
             <QuestionInput
               label="Question"
@@ -66,9 +66,7 @@ const QuestionForm = ({
               />
             ))}
 
-            <div
-              className={`flex items-center justify-center ${index === 0 ? "pt-5" : "pt-0"}`}
-            >
+            <div className="flex items-center justify-center">
               {index === quizQuestions.length - 1 && (
                 <button
                   type="button"
