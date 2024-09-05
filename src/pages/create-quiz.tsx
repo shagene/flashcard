@@ -71,13 +71,6 @@ const CreateQuizPage = () => {
     <Layout>
       <div className="text-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-4xl sm:text-5xl font-bold">Create Quiz</h1>
-        <p className="text-lg text-gray-500 mt-4">
-          Click{" "}
-          <a href="/ai-chat" className="text-blue-500 hover:underline">
-            here
-          </a>{" "}
-          to chat with AI to create your quiz.
-        </p>
         <form onSubmit={handleSubmit} className="space-y-4 mb-4">
           <div>
             <label htmlFor="quizName" className="block mt-4 mb-2 text-2xl sm:text-3xl">
